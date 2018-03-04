@@ -1,0 +1,182 @@
+@import '_consts.scss';
+
+body {
+    cursor: none !important;
+}
+
+.btn {
+    cursor: none;
+}
+
+.commentItem {
+    text-align: center;
+    font-size: 30px;
+    margin-bottom: 20px;
+    margin-top: -20px;  
+    max-height: 40px;
+}
+
+.accept {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 120px;
+    font-weight: 900;
+    width: 350px;
+    border: 3px solid $secondFirmBack; 
+    border-radius: 5px;
+    margin: 15px auto;
+    /*padding-bottom: 10px;*/
+    color: $secondFirmBack;
+}
+
+.accept h3{
+    font-size: 40px;
+    padding: 0;
+    margin: 5px;    
+}
+
+.quantity {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 120px;
+    font-weight: 900;
+    width: 350px;
+    border: 3px solid $secondFirmBack; 
+    border-radius: 5px;
+    margin: 60px auto;
+    /*padding-bottom: 10px;*/
+    color: $secondFirmBack;
+}
+
+.quantity h3{
+    font-size: 40px;
+    padding: 0;
+    margin: 5px;    
+}
+
+.qtyAction {
+    width: 230px;
+    height: 230px;
+    margin-top: 60px;
+    text-align: center;
+    background-color: $buttonColor;
+    color: $firstFirmBack;
+}
+
+.qtyAction span {
+    font-size: 70px;
+    position: absolute;
+    top: 138px;
+}
+
+.qtyAction.left span {
+    left: 121px;
+}
+
+.qtyAction.right span {
+    left: 130px;
+}
+
+#main .controlAreaQty {
+    overflow: auto;
+    text-align: center;
+    height: 170px;
+    margin-top: 40px;
+    /* line-height: 9; */
+}
+
+.acceptArea {
+    margin-top: 85px;
+    margin-left: -40px;
+}
+
+.controlArea .controlDiv {
+    width: 30%;
+    margin: 0 10px;
+    display: inline-block;
+}
+
+#main .controlAreaQty button {
+    height: 160px;
+}
+
+#main h4 {
+    color: $secondFirmBack;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 40px;
+    font-weight: 600;
+}
+
+#basket {
+    position: absolute;
+    top: 7px;
+    left: -48px;
+    border: 2px solid #a0a0a0;
+    padding: 7px;
+    background-color: #F9F9F9;
+    font-size: 20px;
+    width: 100%;
+    border-radius: 9px;
+}
+
+#basket ul {
+    list-style: none;
+    margin-left: -40px;
+}
+
+#basket hr {
+    color: black;
+}
+
+#basket ul li .price {
+    text-align: right;
+}
+
+#basket ul li .total{
+    text-align: right;
+    font-weight: 900;
+}
+
+#basket ul li .service{
+    font-weight: 900;
+}
+
+#basket ul li .service {
+    margin-bottom: 0;
+}
+
+#main a.btn.cancel{
+    height: 80px;
+    width: 80px;
+    line-height: 80px;
+    font-size: 50px;
+    /* margin-left: -31px; */
+    float: left;
+    position: absolute;
+    top: -568px;
+    right: -97px;
+    color: red;
+}
+
+#main .qtyArea {
+    margin-top: 50px;
+}
+
+#main .qtyCancel a.btn.cancel {
+    top: -690px;
+    right: 28px;
+}
+
+.basketState {
+    position: absolute;
+    right: 38px;
+    bottom: 2px;
+    text-align: center;
+    font-size: 35px;
+    background: #F9F9F9;
+    border: 1px solid black;
+    /* width: 200px; */
+    padding: 12px 6px 5px 14px;
+    border-radius: 8px;
+}

@@ -1,0 +1,25 @@
+# Lines starting with '#' are considered comments.
+
+bower_components/**
+node_modules/**
+
+# mock
+components/cards/**
+
+sqlUpdate/**
+
+# релиз файлы
+release/**
+tmp/**
+
+# config
+/config/dbParams.php
+
+# sass файлы
+.sass-cache/**
+views/css/*.css
+views/css/*.map
+css/*.map
+distrib/**
+old/**
+/nbproject/private/

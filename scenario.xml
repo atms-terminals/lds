@@ -1,0 +1,91 @@
+<!-- Этот файл сценария не рабочий, создан для удобства редактирования.
+    рабочий сценарий лежит в mySql -->
+<states>
+    <s1>
+        <desc>Терминал. Основной экран терминала</desc>
+        <screen>1</screen>
+        <check>
+            <hw>0</hw>
+        </check>
+        <timer>
+            <screen>1</screen>
+            <timeout>30</timeout>
+            <action>getServiceList</action>
+        </timer>
+    </s1>
+
+    <s2>
+        <desc>Терминал. Прием денег</desc>
+        <check>
+            <hw>0</hw>
+        </check>
+        <screen>2</screen>
+        <cash>1</cash>
+        <timer>
+            <screen>1</screen>
+            <timeoutNoMoney>100</timeoutNoMoney>
+            <timeoutPay>5</timeoutPay>
+            <timeout>400</timeout>
+            <action>pay</action>
+        </timer>
+    </s2>
+
+    <s3>
+        <desc>Терминал. Платеж</desc>
+        <screen>3</screen>
+        <print>
+            <top>4</top>
+            <elements>5</elements>
+            <bottom>6</bottom>
+            <rest>7</rest>
+        </print>
+        <timer>
+            <screen>1</screen>
+            <timeout>5</timeout>
+            <action>getServiceList</action>
+        </timer>
+    </s3>
+
+    <s4></s4>
+    <s5></s5>
+    <s6></s6>
+    <s7></s7>
+
+    <s8>
+        <desc>Терминал. Ошибка работы с оборудованием</desc>
+        <screen>8</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>10</timeout>
+            <action>getServiceList</action>
+        </timer>
+    </s8>
+
+    <s9>
+        <desc>Терминал. Инкассация</desc>
+        <screen>9</screen>
+    </s9>
+
+    <s10></s10>
+    <s11></s11>
+
+    <s12>
+        <desc>Терминал. Временно не работает</desc>
+        <screen>12</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>10</timeout>
+            <action>getServiceList</action>
+        </timer>
+    </s12>
+
+    <s13>
+        <desc>Терминал. Ввод количества услуг</desc>
+        <screen>13</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>100</timeout>
+            <action>getServiceList</action>
+        </timer>
+    </s13>
+</states>
