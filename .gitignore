@@ -22,4 +22,4 @@ views/css/*.map
 css/*.map
 distrib/**
 old/**
-/nbproject/**
+nbproject/**
