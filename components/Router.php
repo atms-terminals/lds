@@ -10,12 +10,13 @@ use components\Url as url;
  */
 class Router
 {
+
     /**
      * Основной метод роутера.
      */
     public static function run()
     {
-        $routesPath = ROOT.'/config/routes.php';
+        $routesPath = ROOT . '/config/routes.php';
         $routes = include $routesPath;
 
         // получить строку запроса
@@ -32,14 +33,14 @@ class Router
                 $rightName = "{$segments[0]}.php";
 
                 // если есть совпадение, определить какой контроллер и action обрабатывает запрос
-                $controllerName = ucfirst(array_shift($segments)).'Controller';
-                $fullControllerName = '\\controllers\\'.$controllerName.'\\'.$controllerName;
-                $actionName = 'action'.ucfirst(array_shift($segments));
+                $controllerName = ucfirst(array_shift($segments)) . 'Controller';
+                $fullControllerName = '\\controllers\\' . $controllerName . '\\' . $controllerName;
+                $actionName = 'action' . ucfirst(array_shift($segments));
 
                 $parameters = $segments;
 
                 // подключить файл класса контроллера
-                $controllerFile = ROOT."/controllers/$controllerName.php";
+                $controllerFile = ROOT . "/controllers/$controllerName.php";
                 if (file_exists($controllerFile)) {
                     include_once $controllerFile;
                 } else {
@@ -73,9 +74,9 @@ class Router
     {
         // дефолтный
         $controllerName = 'LoginController';
-        $fullControllerName = '\\controllers\\'.$controllerName.'\\'.$controllerName;
+        $fullControllerName = '\\controllers\\' . $controllerName . '\\' . $controllerName;
         $actionName = 'actionLogin';
-        $controllerFile = ROOT."/controllers/$controllerName.php";
+        $controllerFile = ROOT . "/controllers/$controllerName.php";
 
         if (file_exists($controllerFile)) {
             include_once $controllerFile;
@@ -87,4 +88,5 @@ class Router
             echo '<h1>OOPS!!!</h1>';
         }
     }
+
 }

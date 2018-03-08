@@ -12,7 +12,7 @@ var currScreen, currAction,
 function sleep(milliseconds) {
     'use strict';
     var start = new Date().getTime();
-    while (new Date().getTime() < start + milliseconds) {
+    while(new Date().getTime() < start + milliseconds) {
 
     }
 }
@@ -40,8 +40,8 @@ function getCurrTime(needDot) {
     var secs = addZero(currDate.getSeconds());
     var ret = {
         delimeter: (needDot) ? ':' : ' ',
-        hours: hour, 
-        minutes: minutes, 
+        hours: hour,
+        minutes: minutes,
         secs: secs
     };
 
@@ -50,17 +50,17 @@ function getCurrTime(needDot) {
 
 /////////////////////////////////////////////////////////////////////////////////////
 // получение содержимого экрана с сервера
-function doAction(activity, nextScreen, values){
+function doAction(activity, nextScreen, values) {
     'use strict';
     // останавливаем таймеры
-    if (nextScreen) {
+    if(nextScreen) {
         clearTimeout(timer);
         clearTimeout(timerNoMoney);
         clearTimeout(timerPay);
     }
 
     values = values || {};
-    if (stopAjax === 1 && false) {
+    if(stopAjax === 1 && false) {
         return false;
     }
     stopAjax = 1;
@@ -73,17 +73,18 @@ function doAction(activity, nextScreen, values){
     };
 
     // $('#loadingMessage').show();
-    if (activity === 'pay') {
+    if(activity === 'pay') {
         $('.btn.action.pay').addClass('hidden');
     }
+    console.log(req);
 
-    $.post(sid + '/ajax/' + activity, req, function (response) {
+    $.post(sid + '/ajax/' + activity, req, function(response) {
         stopAjax = 0;
-        if (response.code === 0 && nextScreen) {
+        if(response.code === 0 && nextScreen) {
 
-            if (response.check.hw && response.check.hw === '1') {
+            if(response.check.hw && response.check.hw === '1') {
                 // проверка установленного соединения
-                if (ws.readyState !== ws.OPEN) {
+                if(ws.readyState !== ws.OPEN) {
                     DispatcherWebSocket();
                 } else {
                     // проверка фискальника
@@ -92,34 +93,34 @@ function doAction(activity, nextScreen, values){
             }
 
             // сохраняем время
-            currDate = new Date(response.dt.year, response.dt.month, response.dt.date, 
+            currDate = new Date(response.dt.year, response.dt.month, response.dt.date,
                 response.dt.hours, response.dt.minutes, response.dt.seconds);
 
-            if (response.html !== '') {
+            if(response.html !== '') {
                 $('#main').html(response.html);
             }
             $('#main').show();
-            
+
             // обработка статуса купюрника
-            if (response.cash && response.cash === '1') {
+            if(response.cash && response.cash === '1') {
                 setCashmachineEnabled(true);
             } else {
                 setCashmachineEnabled(false);
             }
 
             // обработка статуса считки карт
-            if (response.rfid && response.rfid.length !== 0) {
+            if(response.rfid && response.rfid.length !== 0) {
                 getCard(response.rfid);
             }
 
             // если есть печатная форма - печатаем
-            if (response.printForm !== undefined && response.printForm !== '') {
+            if(response.printForm !== undefined && response.printForm !== '') {
                 var i, needDelay = false;
 
-                if (response.printForm.fr !== undefined) {
-                    for (i in response.printForm.fr) {
-                        if (response.printForm.fr.hasOwnProperty(i)) {
-                            if (needDelay) {
+                if(response.printForm.fr !== undefined) {
+                    for(i in response.printForm.fr) {
+                        if(response.printForm.fr.hasOwnProperty(i)) {
+                            if(needDelay) {
                                 sleep(9000);
                             }
                             var elements = response.printForm.fr[i].elements || ';;',
@@ -133,12 +134,12 @@ function doAction(activity, nextScreen, values){
                         }
                     }
                 }
-                if (response.printForm.nofr !== undefined) {
-                    if (needDelay) {
+                if(response.printForm.nofr !== undefined) {
+                    if(needDelay) {
                         sleep(9000);
                     }
-                    for (i in response.printForm.nofr) {
-                        if (response.printForm.nofr.hasOwnProperty(i)) {
+                    for(i in response.printForm.nofr) {
+                        if(response.printForm.nofr.hasOwnProperty(i)) {
                             var line = response.printForm.nofr[i].line || '';
 
                             frPrintTicket(line);
@@ -148,69 +149,73 @@ function doAction(activity, nextScreen, values){
 
             }
 
-            if (response.tTimeoutPay !== undefined) {
+            if(response.tTimeoutPay !== undefined) {
                 tTimeoutPay = response.tTimeoutPay;
             }
 
             // если есть таймер и нет аудио для автоматического перехода
-            if (response.tScreen !== undefined && response.tScreen !== '') {
-                timer = setTimeout(function() {doAction(response.tAction, response.tScreen);} , response.tTimeout * 1000);
-                if (response.tTimeoutNoMoney) {
-                    timerNoMoney = setTimeout(function() {doAction(response.tAction, response.tScreen);} , response.tTimeoutNoMoney * 1000);
+            if(response.tScreen !== undefined && response.tScreen !== '') {
+                timer = setTimeout(function() {
+                    doAction(response.tAction, response.tScreen);
+                }, response.tTimeout * 1000);
+                if(response.tTimeoutNoMoney) {
+                    timerNoMoney = setTimeout(function() {
+                        doAction(response.tAction, response.tScreen);
+                    }, response.tTimeoutNoMoney * 1000);
                 }
             }
         }
     }, 'json')
-        .fail(function () {
+        .fail(function() {
             // скрываем сообщение "подождите"
             $('#main').hide();
             stopAjax = 0;
             $('#loadingMessage').hide();
-            timer =  setTimeout(function() {
-                    // первый скрин, который надо запросить
-                    currScreen = $('#idScreen').val();
-                    currAction = $('#action').val();
-                    doAction(currAction, currScreen);
-                } , 3000);
+            timer = setTimeout(function() {
+                // первый скрин, который надо запросить
+                currScreen = $('#idScreen').val();
+                currAction = $('#action').val();
+                doAction(currAction, currScreen);
+            }, 3000);
         });
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-$(document).ready(function () {
+$(document).ready(function() {
     'use strict';
 
-    document.oncontextmenu = function () {
+    document.oncontextmenu = function() {
         return false;
     };
 
-    var clockTimer =  setInterval(function() {
-            var today = new Date();
-            var time = getCurrTime(today.getSeconds() % 2);
-            $('.currHour').html(time.hours);
-            $('.currMinute').html(time.minutes);
+    var clockTimer = setInterval(function() {
+        var today = new Date();
+        var time = getCurrTime(today.getSeconds() % 2);
+        $('.currHour').html(time.hours);
+        $('.currMinute').html(time.minutes);
 
-            $('.currDate').html(getCurrDate());
-            $('.currTime').html(getCurrTime());
+        $('.currDate').html(getCurrDate());
+        $('.currTime').html(getCurrTime());
 
-            if (flash === 1) {
-                flash = 0;
-                $('.flashing').css('visibility', 'visible');
-                $('.currDelim').css('visibility', 'visible');
-            } else {
-                flash = 1;
-                $('.flashing').css('visibility', 'hidden');
-                $('.currDelim').css('visibility', 'hidden');
-            }
-            currDate.setSeconds(currDate.getSeconds() + 1);
+        if(flash === 1) {
+            flash = 0;
+            $('.flashing').css('visibility', 'visible');
+            $('.currDelim').css('visibility', 'visible');
+        } else {
+            flash = 1;
+            $('.flashing').css('visibility', 'hidden');
+            $('.currDelim').css('visibility', 'hidden');
+        }
+        currDate.setSeconds(currDate.getSeconds() + 1);
 
-        } , 1000);
+    }, 1000);
 
-    timer =  setTimeout(function() {
-            // первый скрин, который надо запросить
-            currScreen = $('#idScreen').val();
-            currAction = $('#action').val();
-            doAction(currAction, currScreen);
-        } , 3000);
+    timer = setTimeout(function() {
+        // первый скрин, который надо запросить
+        currScreen = $('#idScreen').val();
+        currAction = $('#action').val();
+        doAction(currAction, currScreen);
+    }, 3000);
 
     $(document).on('click', '.action', function(event) {
         event.preventDefault();
@@ -224,9 +229,9 @@ $(document).ready(function () {
             var theClass = $(this).attr('class');
             var classes = theClass.match(/\w+|"[^"]+"/g);
             var i;
-            for (i in classes) {
-                if (classes.hasOwnProperty(i)) {
-                    if (classes[i] !== 'value') {
+            for(i in classes) {
+                if(classes.hasOwnProperty(i)) {
+                    if(classes[i] !== 'value') {
                         values[classes[i]] = $(this).val();
                     }
                 }
