@@ -213,16 +213,16 @@ class AjaxController
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
                 "SELECT payments_add_rest($uid, '{$pay['id']}', '$amount') id";
             $pay = dbHelper\DbHelper::selectRow($query);
-    
+
             $replArray['nofr'][0]['patterns'][] = '{REST}';
             $replArray['nofr'][0]['values'][] = number_format($amount, 2, '.', '');
         }
 
         $response = $this->getScreen($nextScreen, $replArray);
-        
+
         $response['message'] = '';
         $response['code'] = 0;
-        
+
         //отправляем результат
         echo json_encode($response);
         return true;
@@ -265,7 +265,7 @@ class AjaxController
 
         $response['message'] = '';
         $response['code'] = 0;
-        
+
         //отправляем результат
         echo json_encode($response);
         return true;
@@ -353,7 +353,7 @@ class AjaxController
             $controls .= "<div class='controlDiv'>
                     <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
                     <input class='activity' type='hidden' value='".FIRST_ACTION."' />
-                    <button class='btn btn-primary action service control'>Отмена</button>   
+                    <button class='btn btn-primary action service control'>Отмена</button>
                 </div>";
         }
 
@@ -374,7 +374,6 @@ class AjaxController
             ORDER BY p.id_parent, p.order, p.`desc`";
         $rows = dbHelper\DbHelper::selectSet($query);
         $buttons = '';
-
         for ($i = $start; $i < $start + BUTTON_PER_SCREEN && $i < count($rows); $i++) {
             $cost = $rows[$i]['price'] && $rows[$i]['price'] != '0.00' ? "<hr>{$rows[$i]['price']} руб." : '';
             if (!$this->hasChildren($rows[$i]['id'])) {
@@ -394,7 +393,7 @@ class AjaxController
                         <input class='value idBasket' type='hidden' value='$idBasket' />
                         <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                         <input class='value id' type='hidden' value='{$rows[$i]['id']}' />
-                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>   
+                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>
                     </span>";
             }
         }
@@ -429,7 +428,7 @@ class AjaxController
 
         $response['message'] = '';
         $response['code'] = 0;
-        
+
         //отправляем результат
         echo json_encode($response);
         return true;
@@ -461,7 +460,7 @@ class AjaxController
 
         $response['message'] = $message;
         $response['code'] = 0;
-        
+
         //отправляем результат
         echo json_encode($response);
         return true;
@@ -487,7 +486,7 @@ class AjaxController
 
         $response['message'] = '';
         $response['code'] = 0;
-        
+
         //отправляем результат
         echo json_encode($response);
         return true;
@@ -515,7 +514,7 @@ class AjaxController
 
         $response['message'] = $message;
         $response['code'] = 0;
-        
+
         //отправляем результат
         echo json_encode($response);
         return true;

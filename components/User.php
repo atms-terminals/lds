@@ -35,7 +35,7 @@ class User
         $ip = url\Url::getIp();
         $id = empty($_GET['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_GET['id']);
 
-        $query = '/*'.__FILE__.':'.__LINE__.'*/ '."SELECT sessions_add('$login', '$password', '$ip', '$id') sid";
+        $query = '/*' . __FILE__ . ':' . __LINE__ . '*/ ' . "SELECT sessions_add('$login', '$password', '$ip', '$id') sid";
         $row = dbHelper\DbHelper::selectRow($query);
 
         if (empty($row['sid'])) {
@@ -123,8 +123,9 @@ class User
         $sid = self::$sid;
 
         // получаем id пользователя
-        $query = '/*'.__FILE__.':'.__LINE__.'*/ '."SELECT sessions_check('$sid') id_user";
+        $query = '/*' . __FILE__ . ':' . __LINE__ . '*/ ' . "SELECT sessions_check('$sid') id_user";
         $row = dbHelper\DbHelper::selectRow($query);
+
         if (empty($row['id_user'])) {
             throw new \Exception('Not auth', 404);
         } else {
@@ -134,7 +135,7 @@ class User
         $uid = self::$uid;
 
         // получаем настройки пользователя
-        $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+        $query = '/*' . __FILE__ . ':' . __LINE__ . '*/ ' .
             "SELECT r.start_url, r.first_screen, r.first_action, u.status, u.id_role
                 from users u
                     join roles r on u.id_role = r.id
@@ -146,7 +147,7 @@ class User
         self::$status = $row['status'];
 
         if ($firstTime) {
-            $_SERVER['REQUEST_URI'] = "\/$sid\/".self::$startUrl;
+            $_SERVER['REQUEST_URI'] = "\/$sid\/" . self::$startUrl;
         }
 
         return true;
