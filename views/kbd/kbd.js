@@ -90,4 +90,25 @@ $(document).ready(function() {
         $('input.value.qty').val(qty);
     });
 
+    $(document).on('click', '.btn.qtyAction-2', function(event) {
+        event.preventDefault();
+        var $qty = $(this).parent().find('.qtyScreen'),
+            qty = $qty.text();
+        if($(this).hasClass('plus')) {
+            if(qty < $(this).data('max')) {
+                qty++;
+            }
+        } else {
+            if(qty > 1) {
+                qty--;
+            }
+        }
+        $qty.val(qty);
+        $qty.text(qty);
+        var sum = 0;
+        $.each($('.qtyScreen'), function(i, e) {
+            sum += parseInt($(e).text());
+        });
+        $('input.value.qty').val(sum);
+    });
 });

@@ -88,4 +88,14 @@
             <action>getServiceList</action>
         </timer>
     </s13>
+
+    <s14>
+        <desc>Терминал. Ввод количества услуг</desc>
+        <screen>14</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>100</timeout>
+            <action>getServiceList</action>
+        </timer>
+    </s14>
 </states>

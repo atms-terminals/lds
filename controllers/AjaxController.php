@@ -9,6 +9,7 @@ define('FIRST_ACTION', 'getServiceList');
 define('GET_MONEY_SCREEN', 2);
 define('GET_MONEY_ACTION', 'getMoneyScreen');
 define('GET_QTY_SCREEN', 13);
+define('GET_QTY2_SCREEN', 14);
 define('GET_QTY_ACTION', 'move');
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
@@ -378,9 +379,13 @@ class AjaxController
             $cost = $rows[$i]['price'] && $rows[$i]['price'] != '0.00' ? "<hr>{$rows[$i]['price']} руб." : '';
             if (!$this->hasChildren($rows[$i]['id'])) {
                 $cost = empty($rows[$i]['price']) || $rows[$i]['price'] == -1 ? '' : $cost;
-                $buttons .= "<span>
-                        <input class='nextScreen' type='hidden' value='".GET_QTY_SCREEN."' />
-                        <input class='activity' type='hidden' value='".GET_QTY_ACTION."' />
+                $buttons .= "<span>";
+                if ($rows[$i]['id'] == 121 || $rows[$i]['id'] == 122) {
+                    $buttons .= "<input class='nextScreen' type='hidden' value='" . GET_QTY2_SCREEN . "' />";
+                } else {
+                    $buttons .= "<input class='nextScreen' type='hidden' value='" . GET_QTY_SCREEN . "' />";
+                }
+                $buttons .= "<input class='activity' type='hidden' value='" . GET_QTY_ACTION . "' />
                         <input class='value price' type='hidden' value='{$rows[$i]['price']}' />
                         <input class='value idService' type='hidden' value='{$rows[$i]['id']}' />
                         <input class='value idBasket' type='hidden' value='$idBasket' />
@@ -520,6 +525,24 @@ class AjaxController
         return true;
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     *
+     * */
+    public function getProffitData()
+    {
+        $value = [
+            '38' => 3,
+            '39' => 4,
+            '40' => 4,
+            '41' => 3,
+            '42' => 5,
+            '43' => 5,
+        ];
+
+        return $value;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * получение экрана для отправки на клиента.
@@ -569,6 +592,26 @@ class AjaxController
             $row = dbHelper\DbHelper::selectRow($query);
             $response['html'] = stripslashes($row['html']);
             $response['html'] = str_replace($replArray['patterns'], $replArray['values'], $response['html']);
+            // кнопки выбора коньков по размеру
+            if ($xml->$idScreen->screen == 14) {
+                $html = '';
+                foreach ($this->getProffitData() as $size => $val) {
+                    $html .= '
+                        <div class="col-md-3 text-center">
+                            <div class="quantity">
+                                <h3>Размер ' . $size . ', всего ' . $val . '</h3>
+                                <div class="qtyScreen">0</div>
+                            </div>
+                            <button class="btn btn-primary qtyAction-2 minus left">
+                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                            </button>
+                            <button class="btn btn-primary qtyAction-2 plus left" data-max="' . $val . '">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            </button>
+                        </div>';
+                }
+                $response['html'] = str_replace('{SERVICE_SIZE}', $html, $response['html']);
+            }
             $response['html'] = preg_replace('/({.*?})/ui', '', $response['html']);
         }
 
@@ -687,4 +730,5 @@ class AjaxController
 
         return array('patterns' => $patterns, 'values' => $values);
     }
+
 }

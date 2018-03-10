@@ -53,6 +53,7 @@ function getCurrTime(needDot) {
 function doAction(activity, nextScreen, values) {
     'use strict';
     // останавливаем таймеры
+
     if(nextScreen) {
         clearTimeout(timer);
         clearTimeout(timerNoMoney);
@@ -76,7 +77,6 @@ function doAction(activity, nextScreen, values) {
     if(activity === 'pay') {
         $('.btn.action.pay').addClass('hidden');
     }
-    console.log(req);
 
     $.post(sid + '/ajax/' + activity, req, function(response) {
         stopAjax = 0;
@@ -225,6 +225,7 @@ $(document).ready(function() {
         var activity = $(this).siblings('.activity').val();
         // значение
         var values = {};
+
         $(this).parent().find('.value').each(function() {
             var theClass = $(this).attr('class');
             var classes = theClass.match(/\w+|"[^"]+"/g);
@@ -240,5 +241,6 @@ $(document).ready(function() {
 
         doAction(activity, nextScreen, values);
     });
+
 });
 
