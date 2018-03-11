@@ -105,10 +105,13 @@ $(document).ready(function() {
         }
         $qty.val(qty);
         $qty.text(qty);
-        var sum = 0;
+        var sum = 0,
+            sizes = {};
         $.each($('.qtyScreen'), function(i, e) {
             sum += parseInt($(e).text());
+            sizes[$(e).data('size')] = $(e).text();
         });
         $('input.value.qty').val(sum);
+        $('input.value.sizes').val(JSON.stringify(sizes));
     });
 });

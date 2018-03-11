@@ -289,6 +289,7 @@ class AjaxController
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Обработка команды формирования корзины
+     * json_decode($_POST['values']['sizes'] - получаем размеры и количества арендуемых коньков
      */
     public function actionAddToBasket()
     {
@@ -600,7 +601,7 @@ class AjaxController
                         <div class="col-md-3 text-center">
                             <div class="quantity">
                                 <h3>Размер ' . $size . ', всего ' . $val . '</h3>
-                                <div class="qtyScreen">0</div>
+                                <div class="qtyScreen" data-size="' . $size . '">0</div>
                             </div>
                             <button class="btn btn-primary qtyAction-2 minus left">
                                 <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
