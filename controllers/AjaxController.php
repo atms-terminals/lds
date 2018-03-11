@@ -380,7 +380,7 @@ class AjaxController
             if (!$this->hasChildren($rows[$i]['id'])) {
                 $cost = empty($rows[$i]['price']) || $rows[$i]['price'] == -1 ? '' : $cost;
                 $buttons .= "<span>";
-                if ($rows[$i]['id'] == 121 || $rows[$i]['id'] == 122) {
+                if ($id == 3 || $id == 39) {
                     $buttons .= "<input class='nextScreen' type='hidden' value='" . GET_QTY2_SCREEN . "' />";
                 } else {
                     $buttons .= "<input class='nextScreen' type='hidden' value='" . GET_QTY_SCREEN . "' />";
