@@ -273,7 +273,7 @@ button.debtsButton {
 button.service {
     width: 48%;
     font-size: 40px;
-    min-height: 150px;
+    /*min-height: 150px;*/
     margin-left: 15px;
     margin-bottom: 15px;
     white-space: normal;
@@ -296,7 +296,7 @@ button.service.control {
 
 #main .newServiceListArea {
     overflow: auto;
-    height: 495px;
+    height: 510px;
     margin-bottom: -40px;
 }
 .confirmDelete {
@@ -339,5 +339,6 @@ select.year, #priceStatus {
 }
 
 .container.controlArea {
-    margin-top: 50px;
+    margin-top: 45px;
+    text-align: center;
 }

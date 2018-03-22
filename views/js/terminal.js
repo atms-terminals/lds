@@ -165,6 +165,12 @@ function doAction(activity, nextScreen, values) {
                 }
             }
         }
+
+        $.each($('.action.service'), function(i, e) {
+            if (!$(e).hasClass('control')) {
+                text_scaling($(e), 150);
+            }
+        });
     }, 'json')
         .fail(function() {
             // скрываем сообщение "подождите"
@@ -178,6 +184,23 @@ function doAction(activity, nextScreen, values) {
                 doAction(currAction, currScreen);
             }, 3000);
         });
+}
+
+function text_scaling($block) {
+    var height_block = 150,
+        text = $block.text();
+    if (text) {
+        var font_size = height_block;
+        while (font_size > 15) {
+            $block.css('font-size', font_size);
+            var height = $block.height() + 18;
+            if (height > height_block) {
+                font_size = font_size * 0.9;
+            } else {
+                break;
+            }
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
