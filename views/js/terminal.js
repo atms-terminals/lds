@@ -241,6 +241,5 @@ $(document).ready(function() {
 
         doAction(activity, nextScreen, values);
     });
-
 });
 

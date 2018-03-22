@@ -3,7 +3,6 @@
 body {
     font-family: arial;
     background-color: $background;
-
     -moz-user-select: none;
     -khtml-user-select: none;
     user-select: none;
@@ -22,12 +21,11 @@ body {
     text-align: center;
     padding-bottom: 5px;
     margin: 0;
-    border-bottom: 2px solid $firstFirmBack;
 }
 
 .logos .line {
     background-color: $secondFirmBack;
-    font-size: 52px;
+    font-size: 34px;
     padding: 10px 0;
     font-weight: 700;
     height: 195px;
@@ -158,8 +156,7 @@ body {
     text-align: center;
     font-size: 24px;
     font-weight: 300;
-    margin-top: 10px;
-    margin-bottom: 0px;
+    margin: 10px 115px 0;
 }
 
 #main .bigDigit {

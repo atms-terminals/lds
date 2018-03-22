@@ -92,6 +92,7 @@ $(document).ready(function() {
 
     $(document).on('click', '.btn.qtyAction-2', function(event) {
         event.preventDefault();
+        clearTimeout(timer);
         var $qty = $(this).parent().find('.qtyScreen'),
             qty = $qty.text();
         if($(this).hasClass('plus')) {
@@ -99,7 +100,7 @@ $(document).ready(function() {
                 qty++;
             }
         } else {
-            if(qty > 1) {
+            if(qty > 0) {
                 qty--;
             }
         }

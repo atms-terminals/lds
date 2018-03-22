@@ -9,7 +9,7 @@ define('FIRST_ACTION', 'getServiceList');
 define('GET_MONEY_SCREEN', 2);
 define('GET_MONEY_ACTION', 'getMoneyScreen');
 define('GET_QTY_SCREEN', 13);
-define('GET_QTY2_SCREEN', 14);
+define('GET_QTY_SCREEN_2', 14);
 define('GET_QTY_ACTION', 'move');
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
@@ -370,7 +370,7 @@ class AjaxController
 
         // добавляем список сервисов
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id, p.`desc`, round(p.price) price, p.color
+            "SELECT p.id, p.`desc`, round(p.price) price, p.color, p.screen
             FROM v_clients_custom_pricelist p
             WHERE p.id_parent = '$id'
             ORDER BY p.id_parent, p.order, p.`desc`";
@@ -381,11 +381,7 @@ class AjaxController
             if (!$this->hasChildren($rows[$i]['id'])) {
                 $cost = empty($rows[$i]['price']) || $rows[$i]['price'] == -1 ? '' : $cost;
                 $buttons .= "<span>";
-                if ($id == 3 || $id == 39) {
-                    $buttons .= "<input class='nextScreen' type='hidden' value='" . GET_QTY2_SCREEN . "' />";
-                } else {
-                    $buttons .= "<input class='nextScreen' type='hidden' value='" . GET_QTY_SCREEN . "' />";
-                }
+                $buttons .= "<input class='nextScreen' type='hidden' value='" . $rows[$i]['screen'] . "' />";
                 $buttons .= "<input class='activity' type='hidden' value='" . GET_QTY_ACTION . "' />
                         <input class='value price' type='hidden' value='{$rows[$i]['price']}' />
                         <input class='value idService' type='hidden' value='{$rows[$i]['id']}' />
@@ -594,12 +590,13 @@ class AjaxController
             $response['html'] = stripslashes($row['html']);
             $response['html'] = str_replace($replArray['patterns'], $replArray['values'], $response['html']);
             // кнопки выбора коньков по размеру
-            if ($xml->$idScreen->screen == 14) {
+            if ($xml->$idScreen->screen == GET_QTY_SCREEN_2) {
                 $html = '';
+                $active = 'active';
                 foreach ($this->getProffitData() as $size => $val) {
                     $html .= '
-                        <div class="col-md-3 text-center">
-                            <div class="quantity">
+                        <div class="col-lg-3 text-center '.$active.'">
+                            <div class="quantity" style="margin: 10px 0">
                                 <h3>Размер ' . $size . ', всего ' . $val . '</h3>
                                 <div class="qtyScreen" data-size="' . $size . '">0</div>
                             </div>
