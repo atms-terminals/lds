@@ -168,7 +168,7 @@ function doAction(activity, nextScreen, values) {
 
         $.each($('.action.service'), function(i, e) {
             if (!$(e).hasClass('control')) {
-                text_scaling($(e), 150);
+                textScaling($(e), 150);
             }
         });
     }, 'json')
@@ -186,17 +186,19 @@ function doAction(activity, nextScreen, values) {
         });
 }
 
-function text_scaling($block) {
-    var height_block = 150,
-        text = $block.text();
+function textScaling($block, height) {
+    'use strict';
+    var text = $block.text();
+    height = height - parseInt($block.css('border-top-width')) - parseInt($block.css('border-bottom-width')) - parseInt($block.css('padding-top')) - parseInt($block.css('padding-bottom'));
     if (text) {
-        var font_size = height_block;
+        var font_size = height;
         while (font_size > 15) {
             $block.css('font-size', font_size);
-            var height = $block.height() + 18;
-            if (height > height_block) {
+            var block_height = $block.height();
+            if (block_height > height) {
                 font_size = font_size * 0.9;
             } else {
+                $block.height(height);
                 break;
             }
         }
