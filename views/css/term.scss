@@ -38,7 +38,7 @@ body {
 .quantity {
     text-align: center;
     text-transform: uppercase;
-    font-size: 120px;
+    font-size: 100px;
     font-weight: 900;
     width: 100%;
     border: 3px solid $secondFirmBack;
@@ -165,18 +165,12 @@ body {
     font-size: 50px;
     float: left;
     position: absolute;
-    top: -568px;
-    right: -97px;
+    top: -640px;
     color: red;
 }
 
 #main .qtyArea {
-    margin-top: 50px;
-}
-
-#main .qtyCancel a.btn.cancel {
-    top: -690px;
-    right: 28px;
+    margin-top: 30px;
 }
 
 .basketState {
@@ -190,4 +184,27 @@ body {
     /* width: 200px; */
     padding: 12px 6px 5px 14px;
     border-radius: 8px;
+}
+
+.btn-left, .btn-right {
+    width: 100%;
+    height: 415px;
+    font-size: 95px;
+    margin-top: 10px;
+}
+
+.sizeSelect .track-wrap {
+    overflow: hidden;
+}
+
+.sizeSelect .track {
+    position: relative;
+    height: 425px;
+    left: -5px;
+}
+
+.sizeSelect .item {
+    display: inline-block;
+    width: 325px;
+    margin: 0 12px;
 }

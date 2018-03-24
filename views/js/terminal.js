@@ -12,7 +12,7 @@ var currScreen, currAction,
 function sleep(milliseconds) {
     'use strict';
     var start = new Date().getTime();
-    while(new Date().getTime() < start + milliseconds) {
+    while (new Date().getTime() < start + milliseconds) {
 
     }
 }
@@ -54,14 +54,14 @@ function doAction(activity, nextScreen, values) {
     'use strict';
     // останавливаем таймеры
 
-    if(nextScreen) {
+    if (nextScreen) {
         clearTimeout(timer);
         clearTimeout(timerNoMoney);
         clearTimeout(timerPay);
     }
 
     values = values || {};
-    if(stopAjax === 1 && false) {
+    if (stopAjax === 1 && false) {
         return false;
     }
     stopAjax = 1;
@@ -74,17 +74,17 @@ function doAction(activity, nextScreen, values) {
     };
 
     // $('#loadingMessage').show();
-    if(activity === 'pay') {
+    if (activity === 'pay') {
         $('.btn.action.pay').addClass('hidden');
     }
 
     $.post(sid + '/ajax/' + activity, req, function(response) {
         stopAjax = 0;
-        if(response.code === 0 && nextScreen) {
+        if (response.code === 0 && nextScreen) {
 
-            if(response.check.hw && response.check.hw === '1') {
+            if (response.check.hw && response.check.hw === '1') {
                 // проверка установленного соединения
-                if(ws.readyState !== ws.OPEN) {
+                if (ws.readyState !== ws.OPEN) {
                     DispatcherWebSocket();
                 } else {
                     // проверка фискальника
@@ -96,31 +96,31 @@ function doAction(activity, nextScreen, values) {
             currDate = new Date(response.dt.year, response.dt.month, response.dt.date,
                 response.dt.hours, response.dt.minutes, response.dt.seconds);
 
-            if(response.html !== '') {
+            if (response.html !== '') {
                 $('#main').html(response.html);
             }
             $('#main').show();
 
             // обработка статуса купюрника
-            if(response.cash && response.cash === '1') {
+            if (response.cash && response.cash === '1') {
                 setCashmachineEnabled(true);
             } else {
                 setCashmachineEnabled(false);
             }
 
             // обработка статуса считки карт
-            if(response.rfid && response.rfid.length !== 0) {
+            if (response.rfid && response.rfid.length !== 0) {
                 getCard(response.rfid);
             }
 
             // если есть печатная форма - печатаем
-            if(response.printForm !== undefined && response.printForm !== '') {
+            if (response.printForm !== undefined && response.printForm !== '') {
                 var i, needDelay = false;
 
-                if(response.printForm.fr !== undefined) {
-                    for(i in response.printForm.fr) {
-                        if(response.printForm.fr.hasOwnProperty(i)) {
-                            if(needDelay) {
+                if (response.printForm.fr !== undefined) {
+                    for (i in response.printForm.fr) {
+                        if (response.printForm.fr.hasOwnProperty(i)) {
+                            if (needDelay) {
                                 sleep(9000);
                             }
                             var elements = response.printForm.fr[i].elements || ';;',
@@ -134,12 +134,12 @@ function doAction(activity, nextScreen, values) {
                         }
                     }
                 }
-                if(response.printForm.nofr !== undefined) {
-                    if(needDelay) {
+                if (response.printForm.nofr !== undefined) {
+                    if (needDelay) {
                         sleep(9000);
                     }
-                    for(i in response.printForm.nofr) {
-                        if(response.printForm.nofr.hasOwnProperty(i)) {
+                    for (i in response.printForm.nofr) {
+                        if (response.printForm.nofr.hasOwnProperty(i)) {
                             var line = response.printForm.nofr[i].line || '';
 
                             frPrintTicket(line);
@@ -149,28 +149,33 @@ function doAction(activity, nextScreen, values) {
 
             }
 
-            if(response.tTimeoutPay !== undefined) {
+            if (response.tTimeoutPay !== undefined) {
                 tTimeoutPay = response.tTimeoutPay;
             }
 
             // если есть таймер и нет аудио для автоматического перехода
-            if(response.tScreen !== undefined && response.tScreen !== '') {
+            if (response.tScreen !== undefined && response.tScreen !== '') {
                 timer = setTimeout(function() {
                     doAction(response.tAction, response.tScreen);
                 }, response.tTimeout * 1000);
-                if(response.tTimeoutNoMoney) {
+                if (response.tTimeoutNoMoney) {
                     timerNoMoney = setTimeout(function() {
                         doAction(response.tAction, response.tScreen);
                     }, response.tTimeoutNoMoney * 1000);
                 }
             }
         }
-
+        // масштабирование текста в кнопках
         $.each($('.action.service'), function(i, e) {
             if (!$(e).hasClass('control')) {
                 textScaling($(e), 150);
             }
         });
+        // выставляем ширину контейнера элементов в экране выбора коньков
+        if($('div').is('.track')) {
+            var track_w = $('.item').length * parseInt($('.item').css('width'));
+            $('.track').width(track_w);
+        }
     }, 'json')
         .fail(function() {
             // скрываем сообщение "подождите"
@@ -191,7 +196,7 @@ function textScaling($block, height) {
     var text = $block.text();
     height = height - parseInt($block.css('border-top-width')) - parseInt($block.css('border-bottom-width')) - parseInt($block.css('padding-top')) - parseInt($block.css('padding-bottom'));
     if (text) {
-        var font_size = height;
+        var font_size = parseInt($block.css('font-size'));
         while (font_size > 15) {
             $block.css('font-size', font_size);
             var block_height = $block.height();
@@ -222,7 +227,7 @@ $(document).ready(function() {
         $('.currDate').html(getCurrDate());
         $('.currTime').html(getCurrTime());
 
-        if(flash === 1) {
+        if (flash === 1) {
             flash = 0;
             $('.flashing').css('visibility', 'visible');
             $('.currDelim').css('visibility', 'visible');
@@ -255,9 +260,9 @@ $(document).ready(function() {
             var theClass = $(this).attr('class');
             var classes = theClass.match(/\w+|"[^"]+"/g);
             var i;
-            for(i in classes) {
-                if(classes.hasOwnProperty(i)) {
-                    if(classes[i] !== 'value') {
+            for (i in classes) {
+                if (classes.hasOwnProperty(i)) {
+                    if (classes[i] !== 'value') {
                         values[classes[i]] = $(this).val();
                     }
                 }

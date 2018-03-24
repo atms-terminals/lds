@@ -9,7 +9,7 @@ define('FIRST_ACTION', 'getServiceList');
 define('GET_MONEY_SCREEN', 2);
 define('GET_MONEY_ACTION', 'getMoneyScreen');
 define('GET_QTY_SCREEN', 13);
-define('GET_QTY_SCREEN_2', 14);
+define('GET_QTY_SCREEN_SKATES', 14);
 define('GET_QTY_ACTION', 'move');
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
@@ -530,11 +530,16 @@ class AjaxController
     {
         $value = [
             '38' => 3,
-            '39' => 4,
-            '40' => 4,
-            '41' => 3,
-            '42' => 5,
+            '38.5' => 3,
+            '39' => 3,
+            '39.5' => 3,
+            '40' => 3,
+            '40.5' => 4,
+            '41' => 4,
+            '41.5' => 4,
+            '42' => 3,
             '43' => 5,
+            '44' => 5,
         ];
 
         return $value;
@@ -585,28 +590,21 @@ class AjaxController
         // экранная форма
         if (!empty($xml->$idScreen->screen)) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                "SELECT s.html from screens s where s.id = '{$xml->$idScreen->screen}'";
+                "SELECT s.html, s.add_screen from screens s where s.id = '{$xml->$idScreen->screen}'";
             $row = dbHelper\DbHelper::selectRow($query);
             $response['html'] = stripslashes($row['html']);
             $response['html'] = str_replace($replArray['patterns'], $replArray['values'], $response['html']);
-            // кнопки выбора коньков по размеру
-            if ($xml->$idScreen->screen == GET_QTY_SCREEN_2) {
+            // если есть дополнительный screen
+            if($row['add_screen']) {
+                $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                    "SELECT s.html from screens s where s.id = '{$row['add_screen']}'";
+                $row = dbHelper\DbHelper::selectRow($query);
+                $add_html = stripslashes($row['html']);
                 $html = '';
-                $active = 'active';
                 foreach ($this->getProffitData() as $size => $val) {
-                    $html .= '
-                        <div class="col-lg-3 text-center '.$active.'">
-                            <div class="quantity" style="margin: 10px 0">
-                                <h3>Размер ' . $size . ', всего ' . $val . '</h3>
-                                <div class="qtyScreen" data-size="' . $size . '">0</div>
-                            </div>
-                            <button class="btn btn-primary qtyAction-2 minus left">
-                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                            </button>
-                            <button class="btn btn-primary qtyAction-2 plus left" data-max="' . $val . '">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                            </button>
-                        </div>';
+                    $htm = str_replace('{SIZE}', $size, $add_html);
+                    $htm = str_replace('{VAL}', $val, $htm);
+                    $html .= $htm;
                 }
                 $response['html'] = str_replace('{SERVICE_SIZE}', $html, $response['html']);
             }

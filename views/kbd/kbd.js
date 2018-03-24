@@ -92,7 +92,6 @@ $(document).ready(function() {
 
     $(document).on('click', '.btn.qtyAction-2', function(event) {
         event.preventDefault();
-        clearTimeout(timer);
         var $qty = $(this).parent().find('.qtyScreen'),
             qty = $qty.text();
         if($(this).hasClass('plus')) {
@@ -114,5 +113,27 @@ $(document).ready(function() {
         });
         $('input.value.qty').val(sum);
         $('input.value.sizes').val(JSON.stringify(sizes));
+    });
+
+    $(document).on('click', '.btn.btn-left, .btn.btn-right', function(event) {
+        event.preventDefault();
+        var track = $('.track'),
+            track_w = track.width(),
+            item = $('.item'),
+            shift = (item.width() + 24) * 3;
+
+        if ($(this).hasClass('btn-right') && (parseInt(track.css('left')) + track_w) > shift) {
+            track.css('left', parseInt(track.css('left')) - shift);
+            $('.btn-left').prop('disabled', false);
+            if ($(this).hasClass('btn-right') && (parseInt(track.css('left')) + track_w) <= shift) {
+                $(this).prop('disabled', true);
+            }
+        } else if ($(this).hasClass('btn-left') && parseInt(track.css('left')) < -5) {
+            track.css('left', parseInt(track.css('left')) + shift);
+            $('.btn-right').prop('disabled', false);
+            if($(this).hasClass('btn-left') && parseInt(track.css('left')) >= -5) {
+                $(this).prop('disabled', true);
+            }
+        }
     });
 });
