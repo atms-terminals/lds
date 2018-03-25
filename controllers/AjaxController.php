@@ -80,8 +80,31 @@ class AjaxController
 
         for ($i = 0; $i < $qty; $i++) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                "SELECT baskets_items_add($uid, '$idBasket', '$idService')";
+                "SELECT baskets_items_add($uid, '$idBasket', '$idService', $qty)";
             $bas = dbHelper\DbHelper::selectRow($query);
+        }
+
+        return $idBasket;
+    }
+    // добавление коньков в корзину
+    private function addToSkatesBasket($uid, $idBasket, $idService, $sizes)
+    {
+        if (!$idBasket) {
+            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                "SELECT baskets_add($uid) id";
+            $bas = dbHelper\DbHelper::selectRow($query);
+            $idBasket = $bas['id'];
+        }
+
+        foreach ($sizes as $size => $val) {
+            if ($val) {
+                for ($i = 0; $i < $val; $i++) {
+                    $name = "Коньки {$size} размера";
+                    $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                        "SELECT baskets_items_skates_add($uid, '$idBasket', '$idService', '$name', $val)";
+                    $bas = dbHelper\DbHelper::selectRow($query);
+                }
+            }
         }
 
         return $idBasket;
@@ -90,20 +113,20 @@ class AjaxController
     private function getBasket($idBasket)
     {
         $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-            "SELECT p.id, p.`desc`, p.price, count(*) qty
+            "SELECT p.id, i.service_name, p.price, i.count
             from baskets_items i
                 join v_custom_pricelist p on i.id_service = p.id
             where i.id_basket = '$idBasket'
-            group by p.id";
+            group by i.service_name";
         $items = dbHelper\DbHelper::selectSet($query);
         $summ = 0;
         $list = '<ul>';
         foreach ($items as $item) {
-            $subsumm = $item['price'] * $item['qty'];
+            $subsumm = $item['price'] * $item['count'];
             $summ += $subsumm;
             $list .=
-                "<li class='item'><p class='service'>{$item['desc']}</p>
-                    <p class='price'>{$item['price']} руб. * {$item['qty']} = $subsumm руб.</p>
+                "<li class='item'><p class='service'>{$item['service_name']}</p>
+                    <p class='price'>{$item['price']} руб. * {$item['count']} = $subsumm руб.</p>
                 </li>";
         }
         $s = number_format($summ, 2, '.', ' ');
@@ -289,7 +312,6 @@ class AjaxController
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Обработка команды формирования корзины
-     * json_decode($_POST['values']['sizes'] - получаем размеры и количества арендуемых коньков
      */
     public function actionAddToBasket()
     {
@@ -299,7 +321,11 @@ class AjaxController
         $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
 
         // добавляем последнее в корзину
-        $idBasket = $this->addToBasket($uid, $idBasket, $idService, $qty);
+        if (isset($_POST['values']['sizes'])) {
+            $idBasket = $this->addToSkatesBasket($uid, $idBasket, $idService, json_decode($_POST['values']['sizes']));
+        } else {
+            $idBasket = $this->addToBasket($uid, $idBasket, $idService, $qty);
+        }
         $_POST['values']['idBasket'] = $idBasket;
         $this->actionGetServiceList();
     }

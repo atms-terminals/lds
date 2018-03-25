@@ -125,13 +125,13 @@ $(document).ready(function() {
         if ($(this).hasClass('btn-right') && (parseInt(track.css('left')) + track_w) > shift) {
             track.css('left', parseInt(track.css('left')) - shift);
             $('.btn-left').prop('disabled', false);
-            if ($(this).hasClass('btn-right') && (parseInt(track.css('left')) + track_w) <= shift) {
+            if ((parseInt(track.css('left')) + track_w) <= shift) {
                 $(this).prop('disabled', true);
             }
         } else if ($(this).hasClass('btn-left') && parseInt(track.css('left')) < -5) {
             track.css('left', parseInt(track.css('left')) + shift);
             $('.btn-right').prop('disabled', false);
-            if($(this).hasClass('btn-left') && parseInt(track.css('left')) >= -5) {
+            if(parseInt(track.css('left')) >= -5) {
                 $(this).prop('disabled', true);
             }
         }
