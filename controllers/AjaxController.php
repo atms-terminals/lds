@@ -16,6 +16,7 @@ define('LOCK_SCREEN', 12);
 define('NO_CARD_SCREEN', 13);
 define('NO_SERVICES_SCREEN', 14);
 define('SERVICE_LIST_SCREEN', 1);
+define('ATTEMPT_BACKUP_ERROR', 16);
 
 /**
  * обработка запросов ajax.
@@ -323,6 +324,9 @@ class AjaxController
         // добавляем последнее в корзину
         if (isset($_POST['values']['sizes'])) {
             $idBasket = $this->addToSkatesBasket($uid, $idBasket, $idService, json_decode($_POST['values']['sizes']));
+            if(!$this->attemptProffitReserve($_POST['values']['sizes'])) {
+                $_POST['nextScreen'] = ATTEMPT_BACKUP_ERROR;
+            }
         } else {
             $idBasket = $this->addToBasket($uid, $idBasket, $idService, $qty);
         }
@@ -336,7 +340,6 @@ class AjaxController
     public function actionGetServiceList()
     {
         define('BUTTON_PER_SCREEN', 6);
-
         if (user\User::getStatus() == 0) {
             $_POST['nextScreen'] = LOCK_SCREEN;
         }
@@ -550,9 +553,27 @@ class AjaxController
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     *
+     * Получение от проффит списка коньков в наличии
      * */
-    public function getProffitData()
+    private function removeReserve()
+    {
+
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Получение от проффит списка коньков в наличии
+     * */
+    private function attemptProffitReserve($sizes)
+    {
+        return true;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Получение от проффит списка коньков в наличии
+     * */
+    private function getProffitData()
     {
         $value = [
             '38' => 3,
