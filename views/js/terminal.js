@@ -48,6 +48,25 @@ function getCurrTime(needDot) {
     return ret;
 }
 
+function textScaling($block, height) {
+    'use strict';
+    var text = $block.text();
+    height = height - parseInt($block.css('border-top-width')) - parseInt($block.css('border-bottom-width')) - parseInt($block.css('padding-top')) - parseInt($block.css('padding-bottom'));
+    if (text) {
+        var font_size = parseInt($block.css('font-size'));
+        while (font_size > 15) {
+            $block.css('font-size', font_size);
+            var block_height = $block.height();
+            if (block_height > height) {
+                font_size = font_size * 0.9;
+            } else {
+                $block.height(height);
+                break;
+            }
+        }
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 // получение содержимого экрана с сервера
 function doAction(activity, nextScreen, values) {
@@ -189,25 +208,6 @@ function doAction(activity, nextScreen, values) {
                 doAction(currAction, currScreen);
             }, 3000);
         });
-}
-
-function textScaling($block, height) {
-    'use strict';
-    var text = $block.text();
-    height = height - parseInt($block.css('border-top-width')) - parseInt($block.css('border-bottom-width')) - parseInt($block.css('padding-top')) - parseInt($block.css('padding-bottom'));
-    if (text) {
-        var font_size = parseInt($block.css('font-size'));
-        while (font_size > 15) {
-            $block.css('font-size', font_size);
-            var block_height = $block.height();
-            if (block_height > height) {
-                font_size = font_size * 0.9;
-            } else {
-                $block.height(height);
-                break;
-            }
-        }
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
