@@ -67,6 +67,18 @@ function textScaling($block, height) {
     }
 }
 
+function removeReserve() {
+    'use strict';
+    if($('input').is('.idBasket')) {
+        var idBasket = $('input.idBasket').val(),
+            sid = $('#sid').val(),
+            req = {idBasket: idBasket},
+            activity = 'removeProffitReserve';
+        
+        $.post(sid + '/ajax/' + activity, req);
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 // получение содержимого экрана с сервера
 function doAction(activity, nextScreen, values) {
@@ -91,6 +103,10 @@ function doAction(activity, nextScreen, values) {
         nextScreen: nextScreen,
         values: values
     };
+
+    if(nextScreen == 1) {
+        removeReserve();
+    }
 
     // $('#loadingMessage').show();
     if (activity === 'pay') {

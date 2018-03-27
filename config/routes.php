@@ -11,7 +11,8 @@ return array(
     '.*?/ajax/getServiceList' => 'ajax/getServiceList',
     '.*?/ajax/addToBasket' => 'ajax/addToBasket',
     '.*?/ajax/getProffitData' => 'ajax/getProffitData',
-    
+    '.*?/ajax/removeProffitReserve' => 'ajax/removeProffitReserve',
+
     '.*?/admin/getHwsState' => 'admin/getHwsState',
     '.*?/admin/getCollections' => 'admin/getCollections',
     '.*?/admin/getCollectionDetails' => 'admin/getCollectionDetails',

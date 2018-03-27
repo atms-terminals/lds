@@ -553,11 +553,16 @@ class AjaxController
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * Получение от проффит списка коньков в наличии
+     * Сброс резервирования
      * */
-    private function removeReserve()
+    public function actionRemoveProffitReserve()
     {
-
+        if(isset($_POST['idBasket'])) {
+            $idBasket = $_POST['idBasket'];
+            $query = "/*".__FILE__.':'.__LINE__."*/ "
+                ."SELECT service_name, count FROM baskets_items WHERE id_basket=$idBasket";
+            $rows = dbHelper\DbHelper::selectSet($query);
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
