@@ -325,7 +325,9 @@ class AjaxController
         if (isset($_POST['values']['sizes'])) {
             $idBasket = $this->addToSkatesBasket($uid, $idBasket, $idService, json_decode($_POST['values']['sizes']));
             if(!$this->attemptProffitReserve($_POST['values']['sizes'])) {
+                $_POST['values']['id'] = $idService;
                 $_POST['nextScreen'] = ATTEMPT_BACKUP_ERROR;
+                $_POST['values']['activity'] = 'move';
             }
         } else {
             $idBasket = $this->addToBasket($uid, $idBasket, $idService, $qty);
@@ -343,11 +345,11 @@ class AjaxController
         if (user\User::getStatus() == 0) {
             $_POST['nextScreen'] = LOCK_SCREEN;
         }
-
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $id = (empty($_POST['values']['id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['id']);
         $start = (empty($_POST['values']['start'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['start']);
         $idBasket = (empty($_POST['values']['idBasket'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idBasket']);
+        $sizes = (empty($_POST['values']['sizes'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['sizes']);
 
         $replArray = $this->makeReplaceArray($nextScreen);
         $this->putPostIntoReplaceArray($replArray);
@@ -365,15 +367,26 @@ class AjaxController
                         <button class='btn btn-primary action service control'>Предыдущий</button>";
             } else {
                 $query = "/*".__FILE__.':'.__LINE__."*/ ".
-                    "SELECT p.id_parent
+                    "SELECT p.id_parent, p.desc, p.screen, p.price
                     from v_clients_custom_pricelist p
                     where p.id = '$id'";
                 $row = dbHelper\DbHelper::selectRow($query);
-
-                $controls .= "<input class='activity' type='hidden' value='getServiceList' />
-                        <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
-                        <input class='value id' type='hidden' value='{$row['id_parent']}' />
-                        <button class='btn btn-primary action service control'>Предыдущий</button>";
+                if($idBasket && $sizes) {
+                    $controls .= "<input class='activity' type='hidden' value='move' />
+                            <input class='nextScreen' type='hidden' value='{$row['screen']}' />
+                            <input class='value serviceName' type='hidden' value='{$row['desc']}' />
+                            <input class='value idService' type='hidden' value='$id' />
+                            <input class='value idBasket' type='hidden' value='$idBasket' />
+                            <input class='value price' type='hidden' value='{$row['price']}' />
+                            <input class='value sizes' type='hidden' value='$sizes' />
+                            <button class='btn btn-primary action service control'>Назад</button>";
+                    $id = 0;
+                } else {
+                    $controls .= "<input class='activity' type='hidden' value='getServiceList' />
+                            <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
+                            <input class='value id' type='hidden' value='{$row['id_parent']}' />
+                            <button class='btn btn-primary action service control'>Предыдущий</button>";
+                }
             }
         } else {
             $controls .= "&nbsp;";
@@ -429,18 +442,20 @@ class AjaxController
             }
         }
 
-        $controls .= "<div class='controlDiv'>";
-        if ($start + BUTTON_PER_SCREEN < count($rows)) {
-            $start += BUTTON_PER_SCREEN;
-            $controls .= "<input class='activity' type='hidden' value='getServiceList' />
-                    <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
-                    <input class='value id' type='hidden' value='$id' />
-                    <input class='value start' type='hidden' value='$start' />
-                    <button class='btn btn-primary action service control'>Следующий</button>";
-        } else {
-            $controls .= "&nbsp;";
+        if ($id) {
+            $controls .= "<div class='controlDiv'>";
+            if ($start + BUTTON_PER_SCREEN < count($rows)) {
+                $start += BUTTON_PER_SCREEN;
+                $controls .= "<input class='activity' type='hidden' value='getServiceList' />
+                        <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
+                        <input class='value id' type='hidden' value='$id' />
+                        <input class='value start' type='hidden' value='$start' />
+                        <button class='btn btn-primary action service control'>Следующий</button>";
+            } else {
+                $controls .= "&nbsp;";
+            }
+            $controls .= "</div>";
         }
-        $controls .= "</div>";
 
         $replArray['patterns'][] = '{CONTROLS_LIST}';
         $replArray['values'][] = $controls;
@@ -487,7 +502,7 @@ class AjaxController
         $replArray['patterns'][] = '{PRICE}';
         $replArray['values'][] = $servParam['price'];
 
-        $response = $this->getScreen($nextScreen, $replArray);
+        $response = $this->getScreen($nextScreen, $replArray, $sizes);
 
         $response['message'] = $message;
         $response['code'] = 0;
@@ -571,7 +586,7 @@ class AjaxController
      * */
     private function attemptProffitReserve($sizes)
     {
-        return true;
+        return false;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -582,13 +597,13 @@ class AjaxController
     {
         $value = [
             '38' => 3,
-            '38.5' => 3,
+            '38,5' => 3,
             '39' => 3,
-            '39.5' => 3,
+            '39,5' => 3,
             '40' => 3,
-            '40.5' => 4,
+            '40,5' => 4,
             '41' => 4,
-            '41.5' => 4,
+            '41,5' => 4,
             '42' => 3,
             '43' => 5,
             '44' => 5,
@@ -647,20 +662,28 @@ class AjaxController
             $response['html'] = stripslashes($row['html']);
             $response['html'] = str_replace($replArray['patterns'], $replArray['values'], $response['html']);
             // если есть дополнительный screen
-            if($row['add_screen']) {
+            if ($row['add_screen']) {
                 $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
                     "SELECT s.html from screens s where s.id = '{$row['add_screen']}'";
                 $row = dbHelper\DbHelper::selectRow($query);
                 $add_html = stripslashes($row['html']);
                 $html = '';
-                foreach ($this->getProffitData() as $size => $val) {
+                $sizes = empty($_POST['values']['sizes']) ? 0 : json_decode(str_replace('\\', '', $_POST['values']['sizes']), true);
+                // Запрос размеров в проффит
+                $data = $this->getProffitData();
+                foreach ($data as $size => $val) {
                     $htm = str_replace('{SIZE}', $size, $add_html);
                     $htm = str_replace('{VAL}', $val, $htm);
+                    if ($sizes) {
+                        $htm = str_replace('{SEL}', $sizes[$size], $htm);
+                    } else {
+                        $htm = str_replace('{SEL}', 0, $htm);
+                    }
                     $html .= $htm;
                 }
                 $response['html'] = str_replace('{SERVICE_SIZE}', $html, $response['html']);
             }
-            $response['html'] = preg_replace('/({.*?})/ui', '', $response['html']);
+//            $response['html'] = preg_replace('/({.*?})/ui', '', $response['html']);
         }
 
         // таймер

@@ -74,7 +74,7 @@ function removeReserve() {
             sid = $('#sid').val(),
             req = {idBasket: idBasket},
             activity = 'removeProffitReserve';
-        
+
         $.post(sid + '/ajax/' + activity, req);
     }
 }
@@ -104,7 +104,7 @@ function doAction(activity, nextScreen, values) {
         values: values
     };
 
-    if(nextScreen == 1) {
+    if(nextScreen === 1) {
         removeReserve();
     }
 
