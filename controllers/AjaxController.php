@@ -81,7 +81,7 @@ class AjaxController
 
         for ($i = 0; $i < $qty; $i++) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                "SELECT baskets_items_add($uid, '$idBasket', '$idService', $qty)";
+                "SELECT baskets_items_add($uid, '$idBasket', '$idService')";
             $bas = dbHelper\DbHelper::selectRow($query);
         }
 
@@ -102,7 +102,7 @@ class AjaxController
                 for ($i = 0; $i < $val; $i++) {
                     $name = "Коньки {$size} размера";
                     $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                        "SELECT baskets_items_skates_add($uid, '$idBasket', '$idService', '$name', $val)";
+                        "SELECT baskets_items_skates_add($uid, '$idBasket', '$idService', '$name')";
                     $bas = dbHelper\DbHelper::selectRow($query);
                 }
             }
@@ -114,7 +114,7 @@ class AjaxController
     private function getBasket($idBasket)
     {
         $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-            "SELECT p.id, i.service_name, p.price, i.count
+            "SELECT p.id, i.service_name, p.price, count(i.service_name) as count
             from baskets_items i
                 join v_custom_pricelist p on i.id_service = p.id
             where i.id_basket = '$idBasket'
@@ -586,7 +586,7 @@ class AjaxController
      * */
     private function attemptProffitReserve($sizes)
     {
-        return false;
+        return true;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
