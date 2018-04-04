@@ -158,6 +158,24 @@ function handleFRResponse(result, obj) {
     console.log('ФР: ' + result + '\n' + obj);
 }
 
+function handleDispenserResponse(result, obj) {
+    'use strict';
+    var event = {
+        type: 'dispenser',
+        isError: 0,
+        message: obj
+    },
+    nextScreen = 0;
+    
+    if (result !== 'ok') {
+        nextScreen = 8;
+        event.isError = 1;
+    }
+    
+    doAction('writeLog', nextScreen, event);
+    console.log('Dispenser: ' + result + '\n' + obj);
+}
+
 /**
  * Инициализация купюрника
  */
@@ -213,6 +231,8 @@ function DispatcherWebSocket() {
                 }
             } else if (eventObj.object === 'fr') {
                 handleFRResponse(eventObj.result, evt.data);
+            } else if (eventObj.object === 'dispenser') {
+                handleDispenserResponse(eventObj.result, evt.data);
             }
         };
        
@@ -274,6 +294,47 @@ function frPrintTicket(comments) {
             '"text": "' + encodeURIComponent(comments) + '"' +
         '}');
     }
+}
+
+/**
+ * 
+ * Запрос проверки состояния диспенсора
+ * 
+ */
+function dispenserGetState() {
+    'use strict';
+    ws.send('{"object": "dispenser", "cmd": "getState"}');
+}
+
+
+/**
+ * 
+ * Разрешить/запретить прием карт на диспенсоре
+ * 
+ */
+function dispenserEnableCardAccepting(flag) {
+    'use strict';
+    ws.send('{"object": "dispenser", "cmd": "enableAccepting", "enable": ' + flag + '}');
+}
+
+/**
+ * 
+ * Считать серийник карты
+ * 
+ */
+function dispenserReadCardSerialNumber() {
+    'use strict';
+    ws.send('{"object": "dispenser", "cmd": "readCardNumber"}');
+}
+
+/**
+ * 
+ * Запрос перемещения карты на диспенсоре
+ * 
+ */
+function dispenserMoveCard(positionCode) {
+    'use strict';
+    ws.send('{"object": "dispenser", "cmd": "moveCard", "type": "' + positionCode + '"}');
 }
 
 $(document).ready(function() {

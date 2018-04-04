@@ -88,7 +88,7 @@ class AjaxController
         return $idBasket;
     }
     // добавление коньков в корзину
-    private function addToSkatesBasket($uid, $idBasket, $idService, $sizes)
+    private function addToSkatesBasket($uid, $idBasket, $idService)
     {
         if (!$idBasket) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
