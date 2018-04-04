@@ -88,7 +88,7 @@ class AjaxController
         return $idBasket;
     }
     // добавление коньков в корзину
-    private function addToSkatesBasket($uid, $idBasket, $idService)
+    private function addToSkatesBasket($uid, $idBasket, $idService, $sizes)
     {
         if (!$idBasket) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
@@ -502,7 +502,7 @@ class AjaxController
         $replArray['patterns'][] = '{PRICE}';
         $replArray['values'][] = $servParam['price'];
 
-        $response = $this->getScreen($nextScreen, $replArray, $sizes);
+        $response = $this->getScreen($nextScreen, $replArray);
 
         $response['message'] = $message;
         $response['code'] = 0;
