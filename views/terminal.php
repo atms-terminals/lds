@@ -61,7 +61,7 @@
         <script src='views/js/terminal.js?<?= filemtime("views/js/terminal.js")?>'></script>
         <script src='views/js/cashcode.js?<?= filemtime("views/js/cashcode.js")?>'></script>
         <script src='views/kbd/kbd.js?<?= filemtime("views/kbd/kbd.js")?>'></script>
-        <!-- <script src='views/js/rfid.js?<?= filemtime("views/js/rfid.js")?>'></script> -->
+        <script src='views/js/rfid.js?<?= filemtime("views/js/rfid.js")?>'></script>
     <!-- env:dev:end -->
 </body>
 </html>
