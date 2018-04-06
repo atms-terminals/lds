@@ -9,7 +9,7 @@ function getCard(params) {
     
     var action = params.action || 'move',
     screen = params.screen || '1',
-    timeout = params.timeout || '120';
+    timeout = params.timeout || '3';
     
     var req = {
         action: 'read',
