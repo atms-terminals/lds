@@ -7,7 +7,10 @@ var currScreen, currAction,
     tTimeoutPay,
     flash = 1,
     currDate = new Date(),
-    stopAjax = 0;
+    stopAjax = 0,
+    cardStat = false,
+    cardCode = false,
+    attemptMoveCardCount = 3;
 
 function sleep(milliseconds) {
     'use strict';
@@ -146,6 +149,23 @@ function doAction(activity, nextScreen, values) {
             // обработка статуса считки карт
             if (response.rfid && response.rfid.length !== 0) {
                 getCard(response.rfid);
+                dispenserMoveCard(33);
+                setTimeout(function() {
+                    if(!cardStat) {
+                        if(attemptMoveCardCount > 0) {
+                            attemptMoveCardCount--;
+                            doAction(activity, nextScreen, values);
+                        } else {
+                            var event = {
+                                type: 'dispenser',
+                                isError: 1,
+                                message: 'Dispenser error'
+                            }
+                            dispenserMoveCard(39);
+                            doAction('writeLog', 12, event);
+                        }
+                    }
+                }, 3000);
             }
 
             // если есть печатная форма - печатаем

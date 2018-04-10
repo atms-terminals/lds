@@ -6,6 +6,7 @@ const RFID_URL = 'http://localhost:8012/index.php';
 // получение содержимого экрана с сервера
 function getCard(params) {
     'use strict';
+    console.log(params);
     
     var action = params.action || 'move',
     screen = params.screen || '1',

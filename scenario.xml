@@ -28,6 +28,12 @@
             <timeout>400</timeout>
             <action>pay</action>
         </timer>
+        <rfid>
+            <screen>0</screen>
+            <action>proffitCard</action>
+            <timeout>3</timeout>
+            <length>1</length>
+        </rfid>
     </s2>
 
     <s3>

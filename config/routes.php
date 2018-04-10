@@ -12,6 +12,7 @@ return array(
     '.*?/ajax/addToBasket' => 'ajax/addToBasket',
     '.*?/ajax/getProffitData' => 'ajax/getProffitData',
     '.*?/ajax/removeProffitReserve' => 'ajax/removeProffitReserve',
+    '.*?/ajax/proffitCard' => 'ajax/proffitCard',
 
     '.*?/admin/getHwsState' => 'admin/getHwsState',
     '.*?/admin/getCollections' => 'admin/getCollections',

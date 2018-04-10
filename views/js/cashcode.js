@@ -166,10 +166,11 @@ function handleDispenserResponse(result, obj) {
         message: obj
     },
     nextScreen = 0;
+    cardStat = true;
     
     if (result !== 'ok') {
-        nextScreen = 8;
         event.isError = 1;
+        cardStat = false;
     }
     
     doAction('writeLog', nextScreen, event);
