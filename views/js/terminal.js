@@ -9,7 +9,6 @@ var currScreen, currAction,
     currDate = new Date(),
     stopAjax = 0,
     cardStat = false,
-    cardCode = false,
     attemptMoveCardCount = 3;
 
 function sleep(milliseconds) {
@@ -162,7 +161,7 @@ function doAction(activity, nextScreen, values) {
                                 message: 'Dispenser error'
                             }
                             dispenserMoveCard(39);
-                            doAction('writeLog', 12, event);
+                            doAction('writeLog', 8, event);
                         }
                     }
                 }, 3000);
