@@ -113,6 +113,9 @@ function doAction(activity, nextScreen, values) {
     // $('#loadingMessage').show();
     if (activity === 'pay') {
         $('.btn.action.pay').addClass('hidden');
+        if(cardStat) {
+            dispenserMoveCard(30);
+        }
     }
 
     $.post(sid + '/ajax/' + activity, req, function(response) {
@@ -161,7 +164,7 @@ function doAction(activity, nextScreen, values) {
                                 message: 'Dispenser error'
                             }
                             dispenserMoveCard(39);
-                            doAction('writeLog', 8, event);
+                            doAction('writeLog', 12, event);
                         }
                     }
                 }, 3000);
