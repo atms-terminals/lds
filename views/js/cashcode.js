@@ -1,8 +1,9 @@
 ﻿/*jshint unused:false*/
-/*global doAction, timerNoMoney, timerPay : true, tTimeoutPay*/
+/*global doAction, timerNoMoney, timerPay : true, tTimeoutPay, cardStat : true*/
 var ws;
-// const DISPATCHER_URL = 'ws://192.168.3.216:8011'; 
-const DISPATCHER_URL = 'ws://localhost:8011'; 
+
+// const DISPATCHER_URL = 'ws://192.168.3.216:8011';
+const DISPATCHER_URL = 'ws://localhost:8011';
 
 /**
  * Блокировка/разблокировка купюрника
@@ -55,7 +56,7 @@ function frPrintXReport() {
 function handleCashmachineEvent(eventType, eventValue) {
     'use strict';
     var event;
-    
+
     if (eventType === 'banknote') {
         var currAmount = parseInt($('.amount').val());
         currAmount += parseInt(eventValue);
@@ -167,12 +168,12 @@ function handleDispenserResponse(result, obj) {
     },
     nextScreen = 0;
     cardStat = true;
-    
+
     if (result !== 'ok') {
         event.isError = 1;
         cardStat = false;
     }
-    
+
     doAction('writeLog', nextScreen, event);
     console.log('Dispenser: ' + result + '\n' + obj);
 }
@@ -194,7 +195,7 @@ function DispatcherWebSocket() {
             };
             doAction('writeLog', 8, event);
         }
-        
+
         ws.onerror = function function_name(argument) {
             var event = {
                 type: 'webSocket',
@@ -215,17 +216,17 @@ function DispatcherWebSocket() {
             var msg = '{"object": "common", "cmd": "connect"}';
             ws.send(msg);
         };
-        
-        ws.onmessage = function (evt) { 
+
+        ws.onmessage = function (evt) {
             var eventObj;
             /* jshint ignore:start */
             eventObj = eval('(' + evt.data + ')');
             /* jshint ignore:end */
-          
+
             if (eventObj.object === 'common' && eventObj.result === 'connected') {
                 // init();
             }
-          
+
             if (eventObj.object === 'cashmachine') {
                 if (eventObj.event != null) {
                     handleCashmachineEvent(eventObj.event, eventObj.eventValue);
@@ -236,7 +237,7 @@ function DispatcherWebSocket() {
                 handleDispenserResponse(eventObj.result, evt.data);
             }
         };
-       
+
        ws.onclose = function() {};
     } else {
         event = {
@@ -251,14 +252,14 @@ function DispatcherWebSocket() {
 }
 
 /**
- * 
+ *
  * Полный функционал по созданию фискального чека
  *
  * Позиции задаются списком "название";"цена";"количество";"налог";, разделенных между собой символом '|'
  * Пример: товар 1;100;2;3000;|товар2;300;1;3000;
- * 
+ *
  * Комментарии печатаются до позиций и после, разделитель в комментариях - конец строки '\n'
- * 
+ *
  * Налог передается одним словом состоящим из 4-х цифр от 0 до 4 («0» – нет, «1»...«4» – налоговая группа)
  * 1 - НДС 18%, 2 - НДС 10%, 3 - НДС 0%, 4 - Без налога
  *
@@ -268,21 +269,21 @@ function DispatcherWebSocket() {
 function frPrintCheck(positions, summ, comment1, comment2, tax, address) {
     'use strict';
     if (ws.readyState === ws.OPEN) {
-        ws.send('{"object": "fr",' + 
-            ' "cmd": "printcheck",' + 
-            ' "text": "' + positions + '",' + 
+        ws.send('{"object": "fr",' +
+            ' "cmd": "printcheck",' +
+            ' "text": "' + positions + '",' +
             ' "summ": "' + summ + '",' +
             ' "info": "' + tax + '",' +
             ' "address": "' + address + '",' +
-            ' "comment1": "' + encodeURIComponent(comment1) + '",' + 
-            ' "comment2": "' + encodeURIComponent(comment2) + '"' + 
+            ' "comment1": "' + encodeURIComponent(comment1) + '",' +
+            ' "comment2": "' + encodeURIComponent(comment2) + '"' +
             '}');
     }
 }
 
 
 /**
-* 
+*
 * Печать не фискального чека
 *
 * Текст передается одной строкой, разделитель строк - символ конца строки '\\n'
@@ -298,9 +299,9 @@ function frPrintTicket(comments) {
 }
 
 /**
- * 
+ *
  * Запрос проверки состояния диспенсора
- * 
+ *
  */
 function dispenserGetState() {
     'use strict';
@@ -309,9 +310,9 @@ function dispenserGetState() {
 
 
 /**
- * 
+ *
  * Разрешить/запретить прием карт на диспенсоре
- * 
+ *
  */
 function dispenserEnableCardAccepting(flag) {
     'use strict';
@@ -319,9 +320,9 @@ function dispenserEnableCardAccepting(flag) {
 }
 
 /**
- * 
+ *
  * Считать серийник карты
- * 
+ *
  */
 function dispenserReadCardSerialNumber() {
     'use strict';
@@ -329,9 +330,9 @@ function dispenserReadCardSerialNumber() {
 }
 
 /**
- * 
+ *
  * Запрос перемещения карты на диспенсоре
- * 
+ *
  */
 function dispenserMoveCard(positionCode) {
     'use strict';

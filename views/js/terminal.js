@@ -1,5 +1,5 @@
 /*jshint unused:false*/
-/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck, frPrintTicket*/
+/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck, frPrintTicket, dispenserMoveCard*/
 /* global getCard*/
 
 var currScreen, currAction,
@@ -159,7 +159,7 @@ function doAction(activity, nextScreen, values) {
                                 type: 'dispenser',
                                 isError: 1,
                                 message: 'Dispenser error'
-                            }
+                            };
                             dispenserMoveCard(39);
                             doAction('writeLog', 12, event);
                         }
