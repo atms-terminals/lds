@@ -113,9 +113,6 @@ function doAction(activity, nextScreen, values) {
     // $('#loadingMessage').show();
     if (activity === 'pay') {
         $('.btn.action.pay').addClass('hidden');
-        if(cardStat) {
-            dispenserMoveCard(30);
-        }
     }
 
     $.post(sid + '/ajax/' + activity, req, function(response) {
@@ -220,6 +217,11 @@ function doAction(activity, nextScreen, values) {
                         doAction(response.tAction, response.tScreen);
                     }, response.tTimeoutNoMoney * 1000);
                 }
+            }
+
+            if(activity === 'pay' && cardStat) {
+                dispenserMoveCard(30);
+                cardStat = false;
             }
         }
         // масштабирование текста в кнопках

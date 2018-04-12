@@ -611,10 +611,10 @@ class AjaxController
 
         return $value;
     }
-    
+
     public function actionProffitCard()
     {
-        file_put_contents('log.txt', print_r($_POST, 1));
+        file_put_contents('codecard.txt', print_r($_POST, 1));
 
         $response['code'] = 0;
         //отправляем результат
