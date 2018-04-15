@@ -9,7 +9,12 @@ var currScreen, currAction,
     currDate = new Date(),
     stopAjax = 0,
     cardStat = false,
-    attemptMoveCardCount = 3;
+    attemptMoveCardCount = 3,
+    readCardInterval;
+
+const moveCardToRead = 33,
+      moveCardToBin = 39,
+      moveCardToEject = 30;
 
 function sleep(milliseconds) {
     'use strict';
@@ -49,7 +54,9 @@ function getCurrTime(needDot) {
 
     return ret;
 }
-
+/**
+ * Масштабирование текста
+ */
 function textScaling($block, height) {
     'use strict';
     var text = $block.text();
@@ -81,6 +88,26 @@ function removeReserve() {
     }
 }
 
+function readCard() {
+    readCardInterval = setInterval(function() {
+        var req = {
+            action: 'read',
+            timeout: 3
+        };
+
+        $.post(RFID_URL, req, function (response) {
+            if (response.code === 0) {
+                console.log(response.key);
+                /// код обработки считанной карты
+                dispenserMoveCard(moveCardToEject);
+            }
+        });
+
+        dispenserMoveCard(moveCardToRead);
+
+    }, 10000);
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 // получение содержимого экрана с сервера
 function doAction(activity, nextScreen, values) {
@@ -108,6 +135,9 @@ function doAction(activity, nextScreen, values) {
 
     if(nextScreen === 1) {
         removeReserve();
+        readCard();
+    } else {
+        clearInterval(readCardInterval);
     }
 
     // $('#loadingMessage').show();
@@ -148,7 +178,7 @@ function doAction(activity, nextScreen, values) {
             // обработка статуса считки карт
             if (response.rfid && response.rfid.length !== 0) {
                 getCard(response.rfid);
-                dispenserMoveCard(33);
+                dispenserMoveCard(moveCardToRead);
                 setTimeout(function() {
                     if(!cardStat) {
                         if(attemptMoveCardCount > 0) {
@@ -160,8 +190,9 @@ function doAction(activity, nextScreen, values) {
                                 isError: 1,
                                 message: 'Dispenser error'
                             };
-                            dispenserMoveCard(39);
-                            doAction('writeLog', 12, event);
+                            nextScreen = 12;
+                            dispenserMoveCard(moveCardToBin);
+                            doAction('writeLog', nextScreen, event);
                         }
                     }
                 }, 3000);
@@ -220,7 +251,7 @@ function doAction(activity, nextScreen, values) {
             }
 
             if(activity === 'pay' && cardStat) {
-                dispenserMoveCard(30);
+                dispenserMoveCard(moveCardToEject);
                 cardStat = false;
             }
         }
@@ -311,5 +342,6 @@ $(document).ready(function() {
 
         doAction(activity, nextScreen, values);
     });
+
 });
 

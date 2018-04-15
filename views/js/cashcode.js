@@ -159,6 +159,9 @@ function handleFRResponse(result, obj) {
     console.log('ФР: ' + result + '\n' + obj);
 }
 
+/**
+ * Обработчик событий диспенсора
+ */
 function handleDispenserResponse(result, obj) {
     'use strict';
     var event = {
