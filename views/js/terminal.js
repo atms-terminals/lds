@@ -1,5 +1,5 @@
 /*jshint unused:false*/
-/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck, frPrintTicket, dispenserMoveCard*/
+/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck, frPrintTicket, dispenserMoveCard, RFID_URL : false*/
 /* global getCard*/
 
 var currScreen, currAction,
@@ -89,6 +89,7 @@ function removeReserve() {
 }
 
 function readCard() {
+    'use strict';
     readCardInterval = setInterval(function() {
         var req = {
             action: 'read',
