@@ -18,7 +18,6 @@ function getCard(params) {
 
     // $('#loadingMessage').show();
     $.post(RFID_URL, req, function (response) {
-        console.log(response);
         if (response.code === 0) {
             doAction(action, screen, {card: response.key});
         } else {

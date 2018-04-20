@@ -10,7 +10,8 @@ var currScreen, currAction,
     stopAjax = 0,
     cardStat = false,
     attemptMoveCardCount = 3,
-    readCardInterval;
+    readCardInterval,
+    cardInOperatePosition = false;
 
 const moveCardToRead = 33,
       moveCardToBin = 39,
@@ -95,18 +96,23 @@ function readCard() {
             action: 'read',
             timeout: 3
         };
-
+        
+        dispenserGetState();
+        
         $.post(RFID_URL, req, function (response) {
+            response = JSON.parse(response);
             if (response.code === 0) {
                 console.log(response.key);
                 /// код обработки считанной карты
                 dispenserMoveCard(moveCardToEject);
             }
         });
+        
+        if(cardInOperatePosition) {
+            dispenserMoveCard(moveCardToRead);
+        }
 
-        dispenserMoveCard(moveCardToRead);
-
-    }, 10000);
+    }, 6000);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -136,8 +142,10 @@ function doAction(activity, nextScreen, values) {
 
     if(nextScreen === 1) {
         removeReserve();
+        dispenserEnableCardAccepting(true);
+        cardInOperatePosition = false;
         readCard();
-    } else {
+    } else if(nextScreen !== 0) {
         clearInterval(readCardInterval);
     }
 

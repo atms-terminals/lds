@@ -1,5 +1,5 @@
 ﻿/*jshint unused:false*/
-/*global doAction, timerNoMoney, timerPay : true, tTimeoutPay, cardStat : true*/
+/*global doAction, timerNoMoney, timerPay : true, tTimeoutPay, cardStat : true, enableAcceptingCard : true*/
 var ws;
 
 // const DISPATCHER_URL = 'ws://192.168.3.216:8011';
@@ -176,6 +176,8 @@ function handleDispenserResponse(result, obj) {
         event.isError = 1;
         cardStat = false;
     }
+    var ret = JSON.parse(obj);
+    cardInOperatePosition = ret.cardStatus === 'CardInOperatePosition' ? true : false;
 
     doAction('writeLog', nextScreen, event);
     console.log('Dispenser: ' + result + '\n' + obj);
