@@ -28,7 +28,23 @@
             <timeout>400</timeout>
             <action>pay</action>
         </timer>
-        <rfid>
+<!--         <carddisp>
+            <actionDisp>
+                getCardFromFront
+                getCardFromRear
+                backCardtoCustomer
+                backOffCard
+            </actionDisp>
+            <attempts>3</attempts>
+
+            <successScreen>25</successScreen>
+            <successAction>move</successAction>
+
+            <timeoutScreen>0</timeoutScreen>
+            <timeoutAction>move</timeoutAction>
+            <timeout>3</timeout>
+        </carddisp>
+ -->        <rfid>
             <screen>0</screen>
             <action>proffitCard</action>
             <timeout>3</timeout>
