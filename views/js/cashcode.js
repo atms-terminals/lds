@@ -1,6 +1,6 @@
 ﻿/*jshint unused:false*/
-/*global doAction, timerNoMoney, timerPay : true, tTimeoutPay, cardStat : true, enableAcceptingCard : true*/
-var ws;
+        /*global doAction, timerNoMoney, timerPay : true, tTimeoutPay, cardStat : true, enableAcceptingCard : true, cardInOperatePosition : true*/
+        var ws;
 
 // const DISPATCHER_URL = 'ws://192.168.3.216:8011';
 const DISPATCHER_URL = 'ws://localhost:8011';
@@ -73,7 +73,9 @@ function handleCashmachineEvent(eventType, eventValue) {
             // перезапускаем таймер для кнопки оплатить
             $('.btn.action.pay').addClass('hidden');
             clearTimeout(timerPay);
-            timerPay = setTimeout(function() {$('.btn.action.pay').removeClass('hidden');} , tTimeoutPay * 1000);
+            timerPay = setTimeout(function () {
+                $('.btn.action.pay').removeClass('hidden');
+            }, tTimeoutPay * 1000);
         }
 
         // Проверяем минимальную сумму платежа, если достигнута, то оплачиваем автоматом
@@ -147,8 +149,8 @@ function handleFRResponse(result, obj) {
         type: 'fr',
         isError: 0,
         message: obj
-        },
-        nextScreen = 0;
+    },
+            nextScreen = 0;
 
     if (result !== 'ok') {
         nextScreen = 8;
@@ -169,7 +171,7 @@ function handleDispenserResponse(result, obj) {
         isError: 0,
         message: obj
     },
-    nextScreen = 0;
+            nextScreen = 0;
     cardStat = true;
 
     if (result !== 'ok') {
@@ -210,7 +212,7 @@ function DispatcherWebSocket() {
             doAction('writeLog', 8, event);
         };
 
-        ws.onopen = function() {
+        ws.onopen = function () {
             var event = {
                 type: 'webSocket',
                 isError: 0,
@@ -243,7 +245,7 @@ function DispatcherWebSocket() {
             }
         };
 
-       ws.onclose = function() {};
+        ws.onclose = function () {};
     } else {
         event = {
             type: 'webSocket',
@@ -251,7 +253,7 @@ function DispatcherWebSocket() {
             message: 'WebSocket NOT supported by your Browser!'
         };
         doAction('writeLog', 8, event);
-       // The browser doesn't support WebSocket
+        // The browser doesn't support WebSocket
         // window.alert('WebSocket NOT supported by your Browser!');
     }
 }
@@ -275,31 +277,31 @@ function frPrintCheck(positions, summ, comment1, comment2, tax, address) {
     'use strict';
     if (ws.readyState === ws.OPEN) {
         ws.send('{"object": "fr",' +
-            ' "cmd": "printcheck",' +
-            ' "text": "' + positions + '",' +
-            ' "summ": "' + summ + '",' +
-            ' "info": "' + tax + '",' +
-            ' "address": "' + address + '",' +
-            ' "comment1": "' + encodeURIComponent(comment1) + '",' +
-            ' "comment2": "' + encodeURIComponent(comment2) + '"' +
-            '}');
+                ' "cmd": "printcheck",' +
+                ' "text": "' + positions + '",' +
+                ' "summ": "' + summ + '",' +
+                ' "info": "' + tax + '",' +
+                ' "address": "' + address + '",' +
+                ' "comment1": "' + encodeURIComponent(comment1) + '",' +
+                ' "comment2": "' + encodeURIComponent(comment2) + '"' +
+                '}');
     }
 }
 
 
 /**
-*
-* Печать не фискального чека
-*
-* Текст передается одной строкой, разделитель строк - символ конца строки '\\n'
-*/
+ *
+ * Печать не фискального чека
+ *
+ * Текст передается одной строкой, разделитель строк - символ конца строки '\\n'
+ */
 function frPrintTicket(comments) {
     'use strict';
     if (ws.readyState === ws.OPEN) {
         ws.send('{"object": "fr", ' +
-            '"cmd": "printticket", ' +
-            '"text": "' + encodeURIComponent(comments) + '"' +
-        '}');
+                '"cmd": "printticket", ' +
+                '"text": "' + encodeURIComponent(comments) + '"' +
+                '}');
     }
 }
 
@@ -344,7 +346,7 @@ function dispenserMoveCard(positionCode) {
     ws.send('{"object": "dispenser", "cmd": "moveCard", "type": "' + positionCode + '"}');
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
     'use strict';
     $(document).contextmenu(function function_name() {
         // return false;

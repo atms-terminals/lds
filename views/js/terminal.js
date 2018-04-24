@@ -1,21 +1,20 @@
 /*jshint unused:false*/
 /* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck, frPrintTicket, dispenserMoveCard, RFID_URL : false*/
-/* global getCard*/
+/* global getCard, dispenserEnableCardAccepting, dispenserGetState*/
 
 var currScreen, currAction,
-    timer, timerNoMoney, timerPay,
-    tTimeoutPay,
-    flash = 1,
-    currDate = new Date(),
-    stopAjax = 0,
-    cardStat = false,
-    attemptMoveCardCount = 3,
-    readCardInterval,
-    cardInOperatePosition = false;
-
-const moveCardToRead = 33,
-      moveCardToBin = 39,
-      moveCardToEject = 30;
+        timer, timerNoMoney, timerPay,
+        tTimeoutPay,
+        flash = 1,
+        currDate = new Date(),
+        stopAjax = 0,
+        cardStat = false,
+        attemptMoveCardCount = -1,
+        readCardInterval,
+        cardInOperatePosition = false,
+        moveCardToRead,
+        moveCardToBin,
+        moveCardToEject;
 
 function sleep(milliseconds) {
     'use strict';
@@ -79,11 +78,11 @@ function textScaling($block, height) {
 
 function removeReserve() {
     'use strict';
-    if($('input').is('.idBasket')) {
+    if ($('input').is('.idBasket')) {
         var idBasket = $('input.idBasket').val(),
-            sid = $('#sid').val(),
-            req = {idBasket: idBasket},
-            activity = 'removeProffitReserve';
+                sid = $('#sid').val(),
+                req = {idBasket: idBasket},
+                activity = 'removeProffitReserve';
 
         $.post(sid + '/ajax/' + activity, req);
     }
@@ -91,14 +90,14 @@ function removeReserve() {
 
 function readCard() {
     'use strict';
-    readCardInterval = setInterval(function() {
+    readCardInterval = setInterval(function () {
         var req = {
             action: 'read',
             timeout: 3
         };
-        
+
         dispenserGetState();
-        
+
         $.post(RFID_URL, req, function (response) {
             response = JSON.parse(response);
             if (response.code === 0) {
@@ -107,8 +106,8 @@ function readCard() {
                 dispenserMoveCard(moveCardToEject);
             }
         });
-        
-        if(cardInOperatePosition) {
+
+        if (cardInOperatePosition) {
             dispenserMoveCard(moveCardToRead);
         }
 
@@ -140,12 +139,12 @@ function doAction(activity, nextScreen, values) {
         values: values
     };
 
-    if(nextScreen === 1) {
+    if (nextScreen === 1) {
         removeReserve();
         dispenserEnableCardAccepting(true);
         cardInOperatePosition = false;
         readCard();
-    } else if(nextScreen !== 0) {
+    } else if (nextScreen !== 0) {
         clearInterval(readCardInterval);
     }
 
@@ -154,7 +153,7 @@ function doAction(activity, nextScreen, values) {
         $('.btn.action.pay').addClass('hidden');
     }
 
-    $.post(sid + '/ajax/' + activity, req, function(response) {
+    $.post(sid + '/ajax/' + activity, req, function (response) {
         stopAjax = 0;
         if (response.code === 0 && nextScreen) {
 
@@ -170,7 +169,7 @@ function doAction(activity, nextScreen, values) {
 
             // сохраняем время
             currDate = new Date(response.dt.year, response.dt.month, response.dt.date,
-                response.dt.hours, response.dt.minutes, response.dt.seconds);
+                    response.dt.hours, response.dt.minutes, response.dt.seconds);
 
             if (response.html !== '') {
                 $('#main').html(response.html);
@@ -185,12 +184,16 @@ function doAction(activity, nextScreen, values) {
             }
 
             // обработка статуса считки карт
-            if (response.rfid && response.rfid.length !== 0) {
+            if (response.rfid) {
+                attemptMoveCardCount = attemptMoveCardCount === -1 ? response.rfid.attempts : attemptMoveCardCount;
+                moveCardToRead = response.rfid.actionDisp.moveCardToRead;
+                moveCardToEject = response.rfid.actionDisp.moveCardToEject;
+                moveCardToBin = response.rfid.actionDisp.moveCardToBin;
                 getCard(response.rfid);
                 dispenserMoveCard(moveCardToRead);
-                setTimeout(function() {
-                    if(!cardStat) {
-                        if(attemptMoveCardCount > 0) {
+                setTimeout(function () {
+                    if (!cardStat) {
+                        if (attemptMoveCardCount > 0) {
                             attemptMoveCardCount--;
                             doAction(activity, nextScreen, values);
                         } else {
@@ -199,12 +202,12 @@ function doAction(activity, nextScreen, values) {
                                 isError: 1,
                                 message: 'Dispenser error'
                             };
-                            nextScreen = 12;
+                            nextScreen = response.rfid.errorScreen;
                             dispenserMoveCard(moveCardToBin);
                             doAction('writeLog', nextScreen, event);
                         }
                     }
-                }, 3000);
+                }, response.rfid.timeout * 1000);
             }
 
             // если есть печатная форма - печатаем
@@ -218,10 +221,10 @@ function doAction(activity, nextScreen, values) {
                                 sleep(9000);
                             }
                             var elements = response.printForm.fr[i].elements || ';;',
-                                tax = response.printForm.fr[i].tax || '0000',
-                                top = response.printForm.fr[i].top || '',
-                                bottom = response.printForm.fr[i].bottom || '',
-                                amount = response.printForm.fr[i].amount || 0;
+                                    tax = response.printForm.fr[i].tax || '0000',
+                                    top = response.printForm.fr[i].top || '',
+                                    bottom = response.printForm.fr[i].bottom || '',
+                                    amount = response.printForm.fr[i].amount || 0;
 
                             frPrintCheck(elements, amount, top, bottom, tax, '');
                             needDelay = true;
@@ -249,56 +252,56 @@ function doAction(activity, nextScreen, values) {
 
             // если есть таймер и нет аудио для автоматического перехода
             if (response.tScreen !== undefined && response.tScreen !== '') {
-                timer = setTimeout(function() {
+                timer = setTimeout(function () {
                     doAction(response.tAction, response.tScreen);
                 }, response.tTimeout * 1000);
                 if (response.tTimeoutNoMoney) {
-                    timerNoMoney = setTimeout(function() {
+                    timerNoMoney = setTimeout(function () {
                         doAction(response.tAction, response.tScreen);
                     }, response.tTimeoutNoMoney * 1000);
                 }
             }
 
-            if(activity === 'pay' && cardStat) {
+            if (activity === 'pay' && cardStat) {
                 dispenserMoveCard(moveCardToEject);
                 cardStat = false;
             }
         }
         // масштабирование текста в кнопках
-        $.each($('.action.service'), function(i, e) {
+        $.each($('.action.service'), function (i, e) {
             if (!$(e).hasClass('control')) {
                 textScaling($(e), 150);
             }
         });
         // выставляем ширину контейнера элементов в экране выбора коньков
-        if($('div').is('.track')) {
+        if ($('div').is('.track')) {
             var track_w = $('.item').length * parseInt($('.item').css('width'));
             $('.track').width(track_w);
         }
     }, 'json')
-        .fail(function() {
-            // скрываем сообщение "подождите"
-            $('#main').hide();
-            stopAjax = 0;
-            $('#loadingMessage').hide();
-            timer = setTimeout(function() {
-                // первый скрин, который надо запросить
-                currScreen = $('#idScreen').val();
-                currAction = $('#action').val();
-                doAction(currAction, currScreen);
-            }, 3000);
-        });
+            .fail(function () {
+                // скрываем сообщение "подождите"
+                $('#main').hide();
+                stopAjax = 0;
+                $('#loadingMessage').hide();
+                timer = setTimeout(function () {
+                    // первый скрин, который надо запросить
+                    currScreen = $('#idScreen').val();
+                    currAction = $('#action').val();
+                    doAction(currAction, currScreen);
+                }, 3000);
+            });
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-$(document).ready(function() {
+$(document).ready(function () {
     'use strict';
 
-    document.oncontextmenu = function() {
+    document.oncontextmenu = function () {
         return false;
     };
 
-    var clockTimer = setInterval(function() {
+    var clockTimer = setInterval(function () {
         var today = new Date();
         var time = getCurrTime(today.getSeconds() % 2);
         $('.currHour').html(time.hours);
@@ -320,14 +323,14 @@ $(document).ready(function() {
 
     }, 1000);
 
-    timer = setTimeout(function() {
+    timer = setTimeout(function () {
         // первый скрин, который надо запросить
         currScreen = $('#idScreen').val();
         currAction = $('#action').val();
         doAction(currAction, currScreen);
     }, 3000);
 
-    $(document).on('click', '.action', function(event) {
+    $(document).on('click', '.action', function (event) {
         event.preventDefault();
         // следующий экран куда перейти
         var nextScreen = $(this).siblings('.nextScreen').val();
@@ -336,7 +339,7 @@ $(document).ready(function() {
         // значение
         var values = {};
 
-        $(this).parent().find('.value').each(function() {
+        $(this).parent().find('.value').each(function () {
             var theClass = $(this).attr('class');
             var classes = theClass.match(/\w+|"[^"]+"/g);
             var i;

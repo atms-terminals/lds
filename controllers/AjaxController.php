@@ -659,6 +659,7 @@ class AjaxController
         $response['cash'] = (empty($xml->$idScreen->cash)) ? '0' : '1';
 
         // работа со считкой
+        $response['carddisp'] = (empty($xml->$idScreen->carddisp)) ? array() : $xml->$idScreen->carddisp;
         $response['rfid'] = (empty($xml->$idScreen->rfid)) ? array() : $xml->$idScreen->rfid;
 
         // вцыполнение проверок

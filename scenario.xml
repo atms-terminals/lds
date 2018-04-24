@@ -28,27 +28,17 @@
             <timeout>400</timeout>
             <action>pay</action>
         </timer>
-<!--         <carddisp>
+        <rfid>
             <actionDisp>
-                getCardFromFront
-                getCardFromRear
-                backCardtoCustomer
-                backOffCard
+                <moveCardToRead>33</moveCardToRead>
+                <moveCardToBin>39</moveCardToBin>
+                <moveCardToEject>30</moveCardToEject>
             </actionDisp>
-            <attempts>3</attempts>
-
-            <successScreen>25</successScreen>
-            <successAction>move</successAction>
-
-            <timeoutScreen>0</timeoutScreen>
-            <timeoutAction>move</timeoutAction>
-            <timeout>3</timeout>
-        </carddisp>
- -->        <rfid>
             <screen>0</screen>
             <action>proffitCard</action>
+            <errorScreen>12</errorScreen>
+            <attempts>3</attempts>
             <timeout>3</timeout>
-            <length>1</length>
         </rfid>
     </s2>
 
