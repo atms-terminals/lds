@@ -1,6 +1,6 @@
 ﻿/*jshint unused:false*/
-        /*global doAction, timerNoMoney, timerPay : true, tTimeoutPay, cardStat : true, enableAcceptingCard : true, cardInOperatePosition : true*/
-        var ws;
+/*global doAction, timerNoMoney, readCard, timerPay : true, tTimeoutPay, cardStat : true, enableAcceptingCard : true, cardInOperatePosition : true*/
+var ws;
 
 // const DISPATCHER_URL = 'ws://192.168.3.216:8011';
 const DISPATCHER_URL = 'ws://localhost:8011';
@@ -171,18 +171,22 @@ function handleDispenserResponse(result, obj) {
         isError: 0,
         message: obj
     },
-            nextScreen = 0;
+        nextScreen = 0;
     cardStat = true;
 
     if (result !== 'ok') {
         event.isError = 1;
         cardStat = false;
     }
-    var ret = JSON.parse(obj);
-    cardInOperatePosition = ret.cardStatus === 'CardInOperatePosition' ? true : false;
 
     doAction('writeLog', nextScreen, event);
     console.log('Dispenser: ' + result + '\n' + obj);
+}
+
+function handleDispenserEvent(event, obj) {
+    'use strict';
+//     alert("Dispenser event: " + event + "\n" + obj);
+//     readCard();
 }
 
 /**

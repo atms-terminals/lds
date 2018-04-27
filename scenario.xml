@@ -29,11 +29,6 @@
             <action>pay</action>
         </timer>
         <rfid>
-            <actionDisp>
-                <moveCardToRead>33</moveCardToRead>
-                <moveCardToBin>39</moveCardToBin>
-                <moveCardToEject>30</moveCardToEject>
-            </actionDisp>
             <screen>0</screen>
             <action>proffitCard</action>
             <errorScreen>12</errorScreen>

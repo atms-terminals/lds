@@ -1,5 +1,5 @@
 /*jshint unused:false*/
-/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck, frPrintTicket, dispenserMoveCard, RFID_URL : false*/
+/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck, frPrintTicket, dispenserMoveCard*/
 /* global getCard, dispenserEnableCardAccepting, dispenserGetState*/
 
 var currScreen, currAction,
@@ -9,12 +9,11 @@ var currScreen, currAction,
         currDate = new Date(),
         stopAjax = 0,
         cardStat = false,
-        attemptMoveCardCount = -1,
-        readCardInterval,
-        cardInOperatePosition = false,
-        moveCardToRead,
-        moveCardToBin,
-        moveCardToEject;
+        attemptMoveCardCount = -1;
+
+const   moveCardToRead = 33,
+        moveCardToBin = 39,
+        moveCardToEject = 30;
 
 function sleep(milliseconds) {
     'use strict';
@@ -90,28 +89,13 @@ function removeReserve() {
 
 function readCard() {
     'use strict';
-    readCardInterval = setInterval(function () {
-        var req = {
-            action: 'read',
-            timeout: 3
-        };
+    var params = {
+        screen: 0,
+        timeout: 3
+    };
 
-        dispenserGetState();
-
-        $.post(RFID_URL, req, function (response) {
-            response = JSON.parse(response);
-            if (response.code === 0) {
-                console.log(response.key);
-                /// код обработки считанной карты
-                dispenserMoveCard(moveCardToEject);
-            }
-        });
-
-        if (cardInOperatePosition) {
-            dispenserMoveCard(moveCardToRead);
-        }
-
-    }, 6000);
+    getCard(params);
+    dispenserMoveCard(moveCardToRead);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -142,10 +126,8 @@ function doAction(activity, nextScreen, values) {
     if (nextScreen === 1) {
         removeReserve();
         dispenserEnableCardAccepting(true);
-        cardInOperatePosition = false;
-        readCard();
     } else if (nextScreen !== 0) {
-        clearInterval(readCardInterval);
+        dispenserEnableCardAccepting(false);
     }
 
     // $('#loadingMessage').show();
@@ -186,10 +168,6 @@ function doAction(activity, nextScreen, values) {
             // обработка статуса считки карт
             if (response.rfid) {
                 attemptMoveCardCount = attemptMoveCardCount === -1 ? response.rfid.attempts : attemptMoveCardCount;
-                moveCardToRead = response.rfid.actionDisp.moveCardToRead;
-                moveCardToEject = response.rfid.actionDisp.moveCardToEject;
-                moveCardToBin = response.rfid.actionDisp.moveCardToBin;
-                getCard(response.rfid);
                 dispenserMoveCard(moveCardToRead);
                 setTimeout(function () {
                     if (!cardStat) {
